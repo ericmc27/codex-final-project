@@ -1,0 +1,38 @@
+.signupForm {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+.selectRole {
+    display: inline-flexbox;
+    align-items: center;
+    margin-bottom: 20px;
+    font-size: x-large;
+    font-weight: bolder;
+}
+
+.role {
+    margin: 0 3px 0 20px;
+    cursor: pointer;
+}
+
+.enterInfo {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    cursor: pointer;
+
+}
+
+.enterInfo input{
+    margin-bottom: 15px;
+    font-size:2rem;
+    padding: 5px;
+}
+
+.enterInfo button{
+    background-color: brown;
+    color: white;
+    padding: 15px;
+    font-size: xx-large;
+}
