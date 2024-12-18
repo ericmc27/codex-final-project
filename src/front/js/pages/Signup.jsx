@@ -1,28 +1,67 @@
-import React from "react";
-import "../../styles/signup.css";
+import React, { useState } from "react";
 
 const Signup = () => {
+  const [isLawyer, setIsLawyer] = useState(false);
+
   return (
-    <>
-      <form className="signupForm">
-        <div className="selectRole">
-          <p>I am a: </p>
-          <input type="radio" className="role" id="client" name="role" value="client" checked />
-          <label for="client">Client</label>
-          <input type="radio" className="role" id="lawyer" name="role" value="lawyer" />
-          <label for="lawyer">Lawyer</label>
+    <div className="container mt-5">
+      <form className="d-flex flex-column align-items-center">
+        <div className="mb-4 text-center">
+          <h3 className="mb-3">I am a:</h3>
+          <div className="form-check form-switch d-flex align-items-center justify-content-center">
+            <input
+              className="form-check-input mx-2"
+              style={{ width: "60px", height: "30px" }}
+              type="checkbox"
+              role="switch"
+              id="roleSwitch"
+              checked={isLawyer}
+              onChange={() => setIsLawyer(!isLawyer)}
+            />
+            <label className="form-check-label fs-4" htmlFor="roleSwitch">
+              {isLawyer ? "Lawyer" : "Client"}
+            </label>
+          </div>
         </div>
-        <div className="enterInfo">
-          <input type="text" placeholder="Full Name" />
-          <input type="email" placeholder="Email Address" />
-          <input type="password" placeholder="Password" />
-          <input type="phone" placeholder="Phone Number" />
-          <button>Signup</button>
+
+        <div className="w-100 max-width-500 px-3">
+          <div className="mb-3">
+            <input
+              type="text"
+              className="form-control form-control-lg"
+              placeholder="Full Name"
+            />
+          </div>
+          <div className="mb-3">
+            <input
+              type="email"
+              className="form-control form-control-lg"
+              placeholder="Email Address"
+            />
+          </div>
+          <div className="mb-3">
+            <input
+              type="password"
+              className="form-control form-control-lg"
+              placeholder="Password"
+            />
+          </div>
+          <div className="mb-4">
+            <input
+              type="tel"
+              className="form-control form-control-lg"
+              placeholder="Phone Number"
+            />
+          </div>
+          <button
+            type="submit"
+            className="btn btn-danger btn-lg w-100 py-3 fs-4"
+          >
+            Signup
+          </button>
         </div>
       </form>
-
-
-    </>
+    </div>
   );
 }
 
