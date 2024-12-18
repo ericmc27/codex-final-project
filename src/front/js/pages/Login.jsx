@@ -1,7 +1,20 @@
-import React from "react";
-import { Link } from "react-router-dom";
+import React, { useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
 
 const Login = () => {
+  const [isLawyer, setIsLawyer] = useState(false);
+  const navigate = useNavigate();
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    // After successful login, navigate based on role
+    if (isLawyer) {
+      navigate('/lawyer');
+    } else {
+      navigate('/client');
+    }
+  };
+
   return (
     <div className="container mt-5">
       <div className="row justify-content-center">
@@ -10,7 +23,25 @@ const Login = () => {
             <div className="card-body p-4">
               <h2 className="text-center mb-4">Welcome Back</h2>
 
-              <form>
+              {/* Role Toggle */}
+              <div className="mb-4 text-center">
+                <div className="form-check form-switch d-flex justify-content-center align-items-center">
+                  <input
+                    className="form-check-input mx-2"
+                    style={{ width: "60px", height: "30px" }}
+                    type="checkbox"
+                    role="switch"
+                    id="roleSwitch"
+                    checked={isLawyer}
+                    onChange={() => setIsLawyer(!isLawyer)}
+                  />
+                  <label className="form-check-label fs-5" htmlFor="roleSwitch">
+                    Login as {isLawyer ? "Lawyer" : "Client"}
+                  </label>
+                </div>
+              </div>
+
+              <form onSubmit={handleSubmit}>
                 <div className="mb-3">
                   <label className="form-label">Email address</label>
                   <input
@@ -44,7 +75,7 @@ const Login = () => {
                   type="submit"
                   className="btn btn-primary btn-lg w-100 mb-3"
                 >
-                  Login
+                  Login as {isLawyer ? "Lawyer" : "Client"}
                 </button>
 
                 <div className="text-center">
@@ -59,7 +90,6 @@ const Login = () => {
             </div>
           </div>
 
-          {/* Optional: Forgot Password Link */}
           <div className="text-center mt-3">
             <Link to="/forgot-password" className="text-decoration-none">
               Forgot your password?
