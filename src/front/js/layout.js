@@ -3,11 +3,11 @@ import { BrowserRouter, Route, Routes } from "react-router-dom";
 import ScrollToTop from "./component/scrollToTop";
 import { BackendURL } from "./component/backendURL";
 import { ThemeProvider } from "./context/ThemeContext.jsx";
-
 import injectContext from "./store/appContext";
 import Login from "./pages/Login.jsx";
 import Signup from "./pages/Signup.jsx";
 import Lawyer from "./pages/Lawyer.jsx";
+import Client from "./pages/Client.jsx";
 import { Navbar } from "./component/navbar";
 import { Footer } from "./component/footer";
 import Terms from "./pages/Terms.jsx";
@@ -30,6 +30,7 @@ const Layout = () => {
                         <Route element={<Login />} path="/login" />
                         <Route element={<Lawyer />} path="/lawyer" />
                         <Route element={<Terms />} path="/terms" />
+                        <Route element={<Client />} path="/client" />
                         <Route element={<h1>Not found!</h1>} />
                     </Routes>
                     <Footer />

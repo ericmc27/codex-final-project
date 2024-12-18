@@ -93,8 +93,8 @@ const Client = () => {
                                         <td>{appointment.time}</td>
                                         <td>
                                             <span className={`badge ${appointment.status === 'Scheduled' ? 'bg-success' :
-                                                    appointment.status === 'Pending' ? 'bg-warning' :
-                                                        'bg-primary'
+                                                appointment.status === 'Pending' ? 'bg-warning' :
+                                                    'bg-primary'
                                                 }`}>
                                                 {appointment.status}
                                             </span>
