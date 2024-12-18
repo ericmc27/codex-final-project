@@ -2,7 +2,7 @@ import React from "react";
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 import ScrollToTop from "./component/scrollToTop";
 import { BackendURL } from "./component/backendURL";
-
+import { ThemeProvider } from "./context/ThemeContext.jsx";
 
 import injectContext from "./store/appContext";
 import Login from "./pages/Login.jsx";
@@ -21,7 +21,7 @@ const Layout = () => {
     if (!process.env.BACKEND_URL || process.env.BACKEND_URL == "") return <BackendURL />;
 
     return (
-        <div>
+        <ThemeProvider>
             <BrowserRouter basename={basename}>
                 <ScrollToTop>
                     <Navbar />
@@ -35,7 +35,7 @@ const Layout = () => {
                     <Footer />
                 </ScrollToTop>
             </BrowserRouter>
-        </div>
+        </ThemeProvider>
     );
 };
 

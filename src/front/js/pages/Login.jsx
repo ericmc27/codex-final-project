@@ -1,47 +1,31 @@
-import React, { useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import React, { useState, useEffect } from "react";
+import { Link, useNavigate, useLocation } from "react-router-dom";
+import { useTheme } from "../context/ThemeContext.jsx";
 
 const Login = () => {
-  const [isLawyer, setIsLawyer] = useState(false);
-  const navigate = useNavigate();
-
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    // After successful login, navigate based on role
-    if (isLawyer) {
-      navigate('/lawyer');
-    } else {
-      navigate('/client');
-    }
-  };
+  const { darkMode } = useTheme();
+  const [message, setMessage] = useState('');
 
   return (
-    <div className="container mt-5">
+    <div className={`container mt-5 ${darkMode ? 'dark-mode' : ''}`}>
       <div className="row justify-content-center">
         <div className="col-md-6 col-lg-4">
+          {message && (
+            <div className="alert alert-success alert-dismissible fade show mb-4">
+              {message}
+              <button
+                type="button"
+                className="btn-close"
+                onClick={() => setMessage('')}
+              ></button>
+            </div>
+          )}
+
           <div className="card shadow-sm">
             <div className="card-body p-4">
               <h2 className="text-center mb-4">Welcome Back</h2>
 
-              {/* Role Toggle */}
-              <div className="mb-4 text-center">
-                <div className="form-check form-switch d-flex justify-content-center align-items-center">
-                  <input
-                    className="form-check-input mx-2"
-                    style={{ width: "60px", height: "30px" }}
-                    type="checkbox"
-                    role="switch"
-                    id="roleSwitch"
-                    checked={isLawyer}
-                    onChange={() => setIsLawyer(!isLawyer)}
-                  />
-                  <label className="form-check-label fs-5" htmlFor="roleSwitch">
-                    Login as {isLawyer ? "Lawyer" : "Client"}
-                  </label>
-                </div>
-              </div>
-
-              <form onSubmit={handleSubmit}>
+              <form>
                 <div className="mb-3">
                   <label className="form-label">Email address</label>
                   <input
@@ -75,7 +59,7 @@ const Login = () => {
                   type="submit"
                   className="btn btn-primary btn-lg w-100 mb-3"
                 >
-                  Login as {isLawyer ? "Lawyer" : "Client"}
+                  Login
                 </button>
 
                 <div className="text-center">
@@ -90,6 +74,7 @@ const Login = () => {
             </div>
           </div>
 
+          {/* Optional: Forgot Password Link */}
           <div className="text-center mt-3">
             <Link to="/forgot-password" className="text-decoration-none">
               Forgot your password?

@@ -1,3 +1,48 @@
 /* 
     General Styles used on every website (Don't Repeat Yourself)
 */
+
+/* Dark mode styles */
+.dark-mode {
+  background-color: #1a1a1a;
+  color: #ffffff;
+}
+
+.dark-mode .card {
+  background-color: #2d2d2d;
+  border-color: #404040;
+}
+
+.dark-mode .navbar {
+  background-color: #2d2d2d !important;
+}
+
+.dark-mode .navbar-brand,
+.dark-mode .nav-link {
+  color: #ffffff !important;
+}
+
+.dark-mode .form-control,
+.dark-mode .form-select {
+  background-color: #333333;
+  border-color: #404040;
+  color: #ffffff;
+}
+
+.dark-mode .btn-outline-primary {
+  color: #ffffff;
+  border-color: #0d6efd;
+}
+
+.dark-mode .table {
+  color: #ffffff;
+}
+
+.dark-mode .modal-content {
+  background-color: #2d2d2d;
+  color: #ffffff;
+}
+
+.dark-mode .text-muted {
+  color: #b0b0b0 !important;
+}
