@@ -20,8 +20,6 @@ const Signup = () => {
           <button>Signup</button>
         </div>
       </form>
-
-
     </>
   );
 }
