@@ -21,17 +21,48 @@ def handle_hello():
 
     return jsonify(response_body), 200
 
-# GET all CLIENTS
-@api.route("/clients", methods=['GET'])
-def get_all_clients():
+# @api.route('/clients', methods=['POST'])
+# def add_new_client = ( {newClient} ) => {
 
-    all_clients = Clients.query.all()
+#     newClient = {
+#         "full_name": self.full_name,
+#         "email": self.email,
+#         "password": self.password
+#         "phone_number": self.phone_number 
+#     }
 
-    if all_clients is None:
-        return jsonify("No records found!"), 404
-    else:
-        all_clients = list(map(lambda x: x.serialize(), all_clients))
-        return jsonify(all_clients), 200
+#     let options = {
+#         method: 'POST',
+#         body: JSON.stringify(newClient),
+#         headers: {
+#             'Content-Type': 'application/json'
+#         }
+#     }
+
+#     fetch(`https:// `, options)
+#     .then(response => {
+#         if (!response.ok) {
+#                 throw Error(response.statusText)
+#             }
+#         }
+#         setStore([...clients, newClient]);
+#         return response.json();
+#     })
+#     .catch(error => console.log("Error: ", error))
+# }
+
+
+# # GET all CLIENTS
+# @api.route("/clients", methods=['GET'])
+# def get_all_clients():
+
+#     all_clients = Clients.query.all()
+
+#     if all_clients is None:
+#         return jsonify("No records found!"), 404
+#     else:
+#         all_clients = list(map(lambda x: x.serialize(), all_clients))
+#         return jsonify(all_clients), 200
 
 # GET a specific client
 @api.route("/clients/<int:id>", methods=["GET"])
@@ -44,25 +75,58 @@ def get_client(id):
     client = client.serialize()
     return jsonify(client), 200
 
-# GET all LAWYERS
-@api.route("/lawyers", methods=['GET'])
-def get_all_lawyers():
 
-    all_lawyers = Lawyers.query.all()
+# # POST new lawyers
+# @api.route('/lawyers', methods=['POST'])
+# def add_new_lawyer = ( {newLawyer} ) => {
 
-    if all_lawyers is None:
-        return jsonify("No records found!"), 404
-    else:
-        all_lawyers = list(map(lambda x: x.serialize(), all_lawyers))
-        return jsonify(all_lawyers), 200
+#     newLawyer = {
+#         "full_name": self.full_name,
+#         "email": self.email,
+#         "password": self.password
+#         "phone_number": self.phone_number 
+#     }
 
-# GET a specific lawyer
-@api.route("/lawyers/<int:id>", methods=["GET"])
-def get_lawyer(id):
+#     let options = {
+#         method: 'POST',
+#         body: JSON.stringify(newLawyer),
+#         headers: {
+#             'Content-Type': 'application/json'
+#         }
+#     }
+
+#     fetch(`https:// `, options)
+#     .then(response => {
+#         if (!response.ok) {
+#                 throw Error(response.statusText)
+#             }
+#         }
+#         setStore([...lawyers, newLawyer]);
+#         return response.json();
+#     })
+#     .catch(error => console.log("Error: ", error))
+# }
+
+
+# # GET all LAWYERS
+# @api.route("/lawyers", methods=['GET'])
+# def get_all_lawyers():
+
+#     all_lawyers = Lawyers.query.all()
+
+#     if all_lawyers is None:
+#         return jsonify("No records found!"), 404
+#     else:
+#         all_lawyers = list(map(lambda x: x.serialize(), all_lawyers))
+#         return jsonify(all_lawyers), 200
+
+# # GET a specific lawyer
+# @api.route("/lawyers/<int:id>", methods=["GET"])
+# def get_lawyer(id):
     
-    lawyer = Lawyers.query.get(id)
+#     lawyer = Lawyers.query.get(id)
 
-    if lawyer is None:
-        raise APIException(f'Lawyer ID {id} is not found!', status_code = 404)
-    lawyer = lawyer.serialize()
-    return jsonify(lawyer), 200
+#     if lawyer is None:
+#         raise APIException(f'Lawyer ID {id} is not found!', status_code = 404)
+#     lawyer = lawyer.serialize()
+#     return jsonify(lawyer), 200
