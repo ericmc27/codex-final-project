@@ -2,7 +2,7 @@
 This module takes care of starting the API Server, Loading the DB and Adding the endpoints
 """
 from flask import Flask, request, jsonify, url_for, Blueprint
-from api.models import db, User
+from api.models import db, User, Clients, Lawyers
 from api.utils import generate_sitemap, APIException
 from flask_cors import CORS
 
@@ -11,6 +11,10 @@ api = Blueprint('api', __name__)
 # Allow CORS requests to this API
 CORS(api)
 
+people = [
+    {'name':'Rebekah', 'id':1}, 
+    {'name':'Eric', 'id':2}, 
+    {'name':'Diego', 'id': 3}]
 
 @api.route('/hello', methods=['POST', 'GET'])
 def handle_hello():
@@ -20,3 +24,116 @@ def handle_hello():
     }
 
     return jsonify(response_body), 200
+
+# @api.route('/clients', methods=['POST'])
+# def add_new_client = ( {newClient} ) => {
+
+#     newClient = {
+#         "full_name": self.full_name,
+#         "email": self.email,
+#         "password": self.password
+#         "phone_number": self.phone_number 
+#     }
+
+#     let options = {
+#         method: 'POST',
+#         body: JSON.stringify(newClient),
+#         headers: {
+#             'Content-Type': 'application/json'
+#         }
+#     }
+
+#     fetch(`https:// `, options)
+#     .then(response => {
+#         if (!response.ok) {
+#                 throw Error(response.statusText)
+#             }
+#         }
+#         setStore([...clients, newClient]);
+#         return response.json();
+#     })
+#     .catch(error => console.log("Error: ", error))
+# }
+
+
+# GET all CLIENTS
+@api.route("/clients", methods=['GET'])
+def get_all_clients():
+    return jsonify(people)
+    all_clients = Clients.query.all()
+
+    if all_clients is None:
+        return jsonify("No records found!"), 404
+    else:
+        all_clients = list(map(lambda x: x.serialize(), all_clients))
+        return jsonify(all_clients), 200
+
+# GET a specific client
+@api.route("/clients/<int:id>", methods=["GET"])
+def get_client(id):
+    
+    result = next((person for person in people if person['id'] == id), None)
+    return jsonify(result)
+
+    # client = people.query.get(id)
+
+    # if client is None:
+    #     raise APIException(f'Client ID {id} is not found!', status_code = 404)
+    # client = client.serialize()
+    # return jsonify(client), 200
+
+
+# # POST new lawyers
+# @api.route('/lawyers', methods=['POST'])
+# def add_new_lawyer = ( {newLawyer} ) => {
+
+#     newLawyer = {
+#         "full_name": self.full_name,
+#         "email": self.email,
+#         "password": self.password
+#         "phone_number": self.phone_number 
+#     }
+
+#     let options = {
+#         method: 'POST',
+#         body: JSON.stringify(newLawyer),
+#         headers: {
+#             'Content-Type': 'application/json'
+#         }
+#     }
+
+#     fetch(`https:// `, options)
+#     .then(response => {
+#         if (!response.ok) {
+#                 throw Error(response.statusText)
+#             }
+#         }
+#         setStore([...lawyers, newLawyer]);
+#         return response.json();
+#     })
+#     .catch(error => console.log("Error: ", error))
+# }
+
+
+# # GET all LAWYERS
+# @api.route("/lawyers", methods=['GET'])
+# def get_all_lawyers():
+
+#     all_lawyers = Lawyers.query.all()
+
+#     if all_lawyers is None:
+#         return jsonify("No records found!"), 404
+#     else:
+#         all_lawyers = list(map(lambda x: x.serialize(), all_lawyers))
+#         return jsonify(all_lawyers), 200
+
+# # GET a specific lawyer
+# @api.route("/lawyers/<int:id>", methods=["GET"])
+# def get_lawyer(id):
+    
+#     lawyer = Lawyers.query.get(id)
+
+#     if lawyer is None:
+#         raise APIException(f'Lawyer ID {id} is not found!', status_code = 404)
+#     lawyer = lawyer.serialize()
+#     return jsonify(lawyer), 200
