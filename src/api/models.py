@@ -34,7 +34,10 @@ class Clients(db.Model):
             # do not serialize the password, its a security breach
             "full_name": self.full_name,
             "email": self.email,
-            "phone_number": self.phone_number
+            "phone_number": self.phone_number,
+            "address": self.address,
+            "practice_area": self.practice_area
+            
         }
     
 class Lawyers(db.Model):
@@ -52,5 +55,9 @@ class Lawyers(db.Model):
             # do not serialize the password, its a security breach
             "full_name": self.full_name,
             "email": self.email,
-            "phone_number": self.phone_number
+            "phone_number": self.phone_number,
+            "practice_area": self.practice_area,
+            "bar_number": self.bar_number,
+            "law_firm": self.law_firm,
+            "professional_experience": self.professional_experience            
         }

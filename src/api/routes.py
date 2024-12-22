@@ -11,6 +11,10 @@ api = Blueprint('api', __name__)
 # Allow CORS requests to this API
 CORS(api)
 
+people = [
+    {'name':'Rebekah', 'id':1}, 
+    {'name':'Eric', 'id':2}, 
+    {'name':'Diego', 'id': 3}]
 
 @api.route('/hello', methods=['POST', 'GET'])
 def handle_hello():
@@ -52,28 +56,31 @@ def handle_hello():
 # }
 
 
-# # GET all CLIENTS
-# @api.route("/clients", methods=['GET'])
-# def get_all_clients():
+# GET all CLIENTS
+@api.route("/clients", methods=['GET'])
+def get_all_clients():
+    return jsonify(people)
+    all_clients = Clients.query.all()
 
-#     all_clients = Clients.query.all()
-
-#     if all_clients is None:
-#         return jsonify("No records found!"), 404
-#     else:
-#         all_clients = list(map(lambda x: x.serialize(), all_clients))
-#         return jsonify(all_clients), 200
+    if all_clients is None:
+        return jsonify("No records found!"), 404
+    else:
+        all_clients = list(map(lambda x: x.serialize(), all_clients))
+        return jsonify(all_clients), 200
 
 # GET a specific client
 @api.route("/clients/<int:id>", methods=["GET"])
 def get_client(id):
     
-    client = Clients.query.get(id)
+    result = next((person for person in people if person['id'] == id), None)
+    return jsonify(result)
 
-    if client is None:
-        raise APIException(f'Client ID {id} is not found!', status_code = 404)
-    client = client.serialize()
-    return jsonify(client), 200
+    # client = people.query.get(id)
+
+    # if client is None:
+    #     raise APIException(f'Client ID {id} is not found!', status_code = 404)
+    # client = client.serialize()
+    # return jsonify(client), 200
 
 
 # # POST new lawyers
