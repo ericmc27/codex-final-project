@@ -9,11 +9,11 @@ const getState = ({ getStore, getActions, setStore }) => {
 				e.preventDefault();
 
 				let newContact = {
-					name: name,
-					email: email,
-					password: password,
-					phone: phone,
-					address: address
+					name,
+					email,
+					password,
+					phone,
+					address
 				}
 
 				let options = {
@@ -24,7 +24,7 @@ const getState = ({ getStore, getActions, setStore }) => {
 					}
 				}
 
-				fetch('https://reimagined-halibut-4jq4pxvqr7963jj5r-3000.app.github.dev', options)
+				fetch('https://reimagined-halibut-4jq4pxvqr7963jj5r-3001.app.github.dev/api/clients', options)
 				.then(response => {
 					if (!response.ok) {
 						throw Error("Error. Unable to post new contact.");

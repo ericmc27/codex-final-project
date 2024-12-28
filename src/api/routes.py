@@ -25,41 +25,31 @@ def handle_hello():
 
     return jsonify(response_body), 200
 
-# @api.route('/clients', methods=['POST'])
-# def add_new_client = ( {newClient} ) => {
 
-#     newClient = {
-#         "full_name": self.full_name,
-#         "email": self.email,
-#         "password": self.password
-#         "phone_number": self.phone_number 
-#     }
+# POST a new CLIENT
+@api.route("/clients", methods=['POST'])
+def add_new_client():
+    data = request.get_json()
+    name = data.get("name")
+    email = data.get("email")
+    password = data.get("password")
+    phone = data.get("phone")
+    address = data.get("address")
 
-#     let options = {
-#         method: 'POST',
-#         body: JSON.stringify(newClient),
-#         headers: {
-#             'Content-Type': 'application/json'
-#         }
-#     }
+    new_user = Clients(name, email, password, phone, address)
 
-#     fetch(`https:// `, options)
-#     .then(response => {
-#         if (!response.ok) {
-#                 throw Error(response.statusText)
-#             }
-#         }
-#         setStore([...clients, newClient]);
-#         return response.json();
-#     })
-#     .catch(error => console.log("Error: ", error))
-# }
+    db.session.add(new_user)
+    db.session.commit()
 
+    client = Clients.query.filter_by(email="RBANKS@FAKEEMAIL.COM").first()
+    print(client)
+
+    return jsonify({"test": "test"})
 
 # GET all CLIENTS
 @api.route("/clients", methods=['GET'])
 def get_all_clients():
-    return jsonify(people)
+
     all_clients = Clients.query.all()
 
     if all_clients is None:
@@ -67,6 +57,8 @@ def get_all_clients():
     else:
         all_clients = list(map(lambda x: x.serialize(), all_clients))
         return jsonify(all_clients), 200
+
+
 
 # GET a specific client
 @api.route("/clients/<int:id>", methods=["GET"])
