@@ -29,7 +29,6 @@ const getState = ({ getStore, getActions, setStore }) => {
 					if (!response.ok) {
 						throw Error("Error. Unable to post new contact.");
 					}
-					console.log("Contact successfully added!");
 					return response.json();
 				})
 				.catch(error => {console.log("More info on error: ", error)})
