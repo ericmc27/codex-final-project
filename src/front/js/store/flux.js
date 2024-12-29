@@ -5,7 +5,7 @@ const getState = ({ getStore, getActions, setStore }) => {
 		store: {
 		},
 		actions: {
-			signup: async (e, {name, email, password, phone, address})=>{
+			signupClient: async (e, {name, email, password, phone, address})=>{
 				e.preventDefault();
 
 				let newContact = {
@@ -38,6 +38,10 @@ const getState = ({ getStore, getActions, setStore }) => {
 					console.log(data)
 				})
 				.catch(error => {console.log("More info on error: ", error)})
+
+			},
+			signupLawyer: ()=>{
+
 			}
 		}
 	};

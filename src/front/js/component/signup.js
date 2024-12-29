@@ -23,3 +23,6 @@ export const CommonFields = ({userData, handleChange}) => {
   )
 } 
 
+export const LawyerFields = ()=>{
+
+}
