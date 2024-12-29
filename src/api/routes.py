@@ -2,7 +2,7 @@
 This module takes care of starting the API Server, Loading the DB and Adding the endpoints
 """
 from flask import Flask, request, jsonify, url_for, Blueprint
-from api.models import db, User, Clients, Lawyers
+from api.models import db, Clients, Lawyers
 from api.utils import generate_sitemap, APIException
 from flask_cors import CORS
 
@@ -25,41 +25,39 @@ def handle_hello():
 
     return jsonify(response_body), 200
 
-# @api.route('/clients', methods=['POST'])
-# def add_new_client = ( {newClient} ) => {
 
-#     newClient = {
-#         "full_name": self.full_name,
-#         "email": self.email,
-#         "password": self.password
-#         "phone_number": self.phone_number 
-#     }
+# POST a new CLIENT
+@api.route("/clients", methods=['POST'])
+def add_new_client():
 
-#     let options = {
-#         method: 'POST',
-#         body: JSON.stringify(newClient),
-#         headers: {
-#             'Content-Type': 'application/json'
-#         }
-#     }
+    data = request.get_json()
+    
+    # Extracting and validating fields
+    name = data.get("name")
+    email = data.get("email")
+    password = data.get("password")
+    phone = data.get("phone")
+    address = data.get("address")
 
-#     fetch(`https:// `, options)
-#     .then(response => {
-#         if (!response.ok) {
-#                 throw Error(response.statusText)
-#             }
-#         }
-#         setStore([...clients, newClient]);
-#         return response.json();
-#     })
-#     .catch(error => console.log("Error: ", error))
-# }
+    # Create a new client instance
+    new_user = Clients(name=name, email=email, password=password, phone=phone, address=address)
+
+    # Check for duplicate email
+    user_exists = Clients.query.filter_by(email=email).first()
+    if user_exists:
+        return jsonify({{"error": "An account with this email already exists"}})
+    else:
+        # Add the new user to the database
+        db.session.add(new_user)
+        db.session.commit()
+        return jsonify({"message": "User successfully added"}), 201
+
 
 
 # GET all CLIENTS
 @api.route("/clients", methods=['GET'])
 def get_all_clients():
-    return jsonify(people)
+
     all_clients = Clients.query.all()
 
     if all_clients is None:
@@ -67,6 +65,8 @@ def get_all_clients():
     else:
         all_clients = list(map(lambda x: x.serialize(), all_clients))
         return jsonify(all_clients), 200
+
+
 
 # GET a specific client
 @api.route("/clients/<int:id>", methods=["GET"])
