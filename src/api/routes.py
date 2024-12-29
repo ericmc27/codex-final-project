@@ -31,8 +31,6 @@ def handle_hello():
 def add_new_client():
 
     data = request.get_json()
-    if not data:
-        return jsonify({"error": "Invalid JSON body"}), 400
     
     # Extracting and validating fields
     name = data.get("name")
@@ -41,22 +39,18 @@ def add_new_client():
     phone = data.get("phone")
     address = data.get("address")
 
-    if not name or not email or not password:
-        return jsonify({"error": "Missing required fields: name email, or password"}), 400
-
     # Create a new client instance
     new_user = Clients(name=name, email=email, password=password, phone=phone, address=address)
 
     # Check for duplicate email
     user_exists = Clients.query.filter_by(email=email).first()
     if user_exists:
-        return jsonify({"error": "An account with this email already exists"}), 409
-
-    # Add the new user to the database
-    db.session.add(new_user)
-    db.session.commit()
-
-    return jsonify({"message": "User successfully added"}), 201
+        return jsonify({{"error": "An account with this email already exists"}})
+    else:
+        # Add the new user to the database
+        db.session.add(new_user)
+        db.session.commit()
+        return jsonify({"message": "User successfully added"}), 201
 
 
 

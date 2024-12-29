@@ -43,14 +43,18 @@ class Lawyers(db.Model):
     password = db.Column(db.String(40), unique=False, nullable=False)
     phone = db.Column(db.String(15), unique=True, nullable=False)
     address = db.Column(db.String, unique=False, nullable=False)
+    photo = db.Column(db.String,  unique=True, nullable=True)
+    specialty = db.Column (db.String, unique=False, nullable=False)
 
     # Define the constructor to accept arguments
-    def __init__(self, name, email, password, phone, address):
+    def __init__(self, name, email, password, phone, address, photo, specialty):
         self.name = name
         self.email = email
         self.password = password
         self.phone = phone
         self.address = address
+        self.photo = photo
+        self.specialty = specialty
 
     def serialize(self):
         return {
@@ -58,6 +62,8 @@ class Lawyers(db.Model):
             "name": self.name,
             "email": self.email,
             "phone": self.phone,
-            "address": self.address
+            "address": self.address,
+            "photo": self.photo,
+            "specialty": self.specialty
         }
     

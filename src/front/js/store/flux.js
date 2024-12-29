@@ -31,6 +31,12 @@ const getState = ({ getStore, getActions, setStore }) => {
 					}
 					return response.json();
 				})
+				.then(data => {
+					if (data) {
+						alert("Oops! An account already exists with that email. ")
+					}
+					console.log(data)
+				})
 				.catch(error => {console.log("More info on error: ", error)})
 			}
 		}
