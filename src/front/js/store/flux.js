@@ -5,7 +5,7 @@ const getState = ({ getStore, getActions, setStore }) => {
 		store: {
 		},
 		actions: {
-			signupClient: async (e, {name, email, password, phone, address})=>{
+			signupClient: async (e, {name, email, password, phone, address}, {areaOfNeed})=>{
 				e.preventDefault();
 
 				let newContact = {
@@ -13,7 +13,8 @@ const getState = ({ getStore, getActions, setStore }) => {
 					email,
 					password,
 					phone,
-					address
+					address,
+					areaOfNeed
 				}
 
 				let options = {
@@ -24,7 +25,7 @@ const getState = ({ getStore, getActions, setStore }) => {
 					}
 				}
 
-				fetch('https://reimagined-halibut-4jq4pxvqr7963jj5r-3001.app.github.dev/api/clients', options)
+				fetch('https://verbose-eureka-7v7qjg57x95g2wwq4-3001.app.github.dev/api/clients', options)
 				.then(response => {
 					if (!response.ok) {
 						throw Error("Error. Unable to post new contact.");
@@ -40,9 +41,50 @@ const getState = ({ getStore, getActions, setStore }) => {
 				.catch(error => {console.log("More info on error: ", error)})
 
 			},
-			signupLawyer: ()=>{
 
-			}
+			signupLawyer: async (e, {name, email, password, phone, address}, {photo, specialty, barNumber, lawFirm, professionalExperience, credentials} )=>{
+					e.preventDefault();
+	
+					let newContact = {
+						name,
+						email,
+						password,
+						phone,
+						address,
+						photo,
+						specialty, 
+						barNumber,
+						lawFirm, 
+						professionalExperience,
+						credentials
+					}
+	
+					let options = {
+						method: 'POST',
+						body: JSON.stringify(newContact), 
+						headers: {
+							'Content-Type': 'application/json'
+						}
+					}
+	
+					fetch('https://verbose-eureka-7v7qjg57x95g2wwq4-3001.app.github.dev/api/lawyers', options)
+					.then(response => {
+						if (!response.ok) {
+							throw Error("Error. Unable to post new contact.");
+						}
+						return response.json();
+					})
+					.then(data => {
+						if (data) {
+							alert("Oops! An account already exists with that email. ")
+						}
+						console.log(data)
+					})
+					.catch(error => {console.log("More info on error: ", error)})
+	
+			},
+
+			
 		}
 	};
 };
