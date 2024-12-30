@@ -33,7 +33,7 @@ const Signup = () => {
           checked={userType === "client"}
         />
 
-        <label class="form-check-label" for="flexSwitchCheckDefault">Client</label>
+        <label className="form-check-label" htmlFor="flexSwitchCheckDefault">Client</label>
 
         <input
           onChange={changeUserType}
@@ -43,12 +43,17 @@ const Signup = () => {
           checked={userType === "lawyer"}
         />
 
-        <label class="form-check-label" for="flexSwitchCheckDefault">Lawyer</label>
+        <label className="form-check-label" htmlFor="flexSwitchCheckDefault">Lawyer</label>
       </div>
 
       {userType === "client" ?
         <form onSubmit={(e) => (actions.signupClient(e, userData))} className="m-auto border border-1" style={{ width: "400px" }}>
           <CommonFields userData={userData} handleChange={handleChange} />
+          <select name="players">
+            <option value={""} selected hidden>Lawyer Type</option>
+            <option value={"lebron"}>Lebron</option>
+            <option value={"curry"}>Curry</option>
+          </select>
         </form>
         :
         <form onSubmit={(e) => (actions.signupClient(e, userData))} className="m-auto border border-1" style={{ width: "400px" }}>
