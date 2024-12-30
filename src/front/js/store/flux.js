@@ -24,7 +24,7 @@ const getState = ({ getStore, getActions, setStore }) => {
 					}
 				}
 
-				fetch('https://reimagined-halibut-4jq4pxvqr7963jj5r-3001.app.github.dev/api/clients', options)
+				fetch('https://automatic-acorn-5g49j74xvvvv27945-3001.app.github.dev/api/clients', options)
 				.then(response => {
 					if (!response.ok) {
 						throw Error("Error. Unable to post new contact.");
@@ -42,6 +42,26 @@ const getState = ({ getStore, getActions, setStore }) => {
 			},
 			signupLawyer: ()=>{
 
+			},
+			login: (e, {email, password}, userType)=>{
+				e.preventDefault()
+
+				const userData = {
+					email,
+					password,
+					user_type: userType
+				}
+
+				const options = {
+					method: 'POST',
+					body: JSON.stringify(userData),
+					headers: {
+						'Content-Type': 'application/json'
+					}
+				}
+				fetch("https://automatic-acorn-5g49j74xvvvv27945-3001.app.github.dev/api/login", options)
+				.then(response=>(response.json()))
+				.then(data=>console.log(data))
 			}
 		}
 	};
