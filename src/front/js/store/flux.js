@@ -42,6 +42,8 @@ const getState = ({ getStore, getActions, setStore }) => {
 		actions: {
 			signup: async (e, {name, email, password, phone, address})=>{
 				e.preventDefault();
+        /**remove */
+        
 			}
 		}
 	};
