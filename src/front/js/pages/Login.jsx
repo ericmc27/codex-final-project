@@ -1,4 +1,5 @@
-import React, { useActionState, useContext } from "react";
+import React, { useContext } from "react";
+import { Link } from "react-router-dom";
 import { LoginInputs } from "../component/login.js";
 import { Context } from "../store/appContext.js";
 
@@ -25,8 +26,8 @@ const Login = () => {
     <div className="d-flex">
       <form
         onSubmit={(e) => (actions.login(e, clientData, "Client"))}
-        style={{ height: "440px", width: "440px", margin: "80px auto 0px auto" }}
-        className="border border-2 d-flex flex-column rounded">
+        style={{ height: "440px", width: "440px", margin: "80px auto 0px auto", backgroundColor: "white"}}
+        className="border d-flex flex-column rounded">
 
         <LoginInputs clientData={clientData} handleChange={handleChange} userType={"Client"} />
         <button
@@ -36,7 +37,7 @@ const Login = () => {
         >
           Login
         </button>
-
+        <label className="m-auto">Don't have an account? <Link className="text-decoration-none" to={"/signup"} from={"/login"}>Sign up</Link></label>
       </form>
 
 
@@ -53,7 +54,7 @@ const Login = () => {
         >
           Login
         </button>
-
+        <label className="m-auto">Don't have an account? <Link className="text-decoration-none" to={"/signup"} from={"/login"}>Sign up</Link></label>
       </form>
     </div>
 

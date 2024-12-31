@@ -4,7 +4,7 @@ import { Context } from "../store/appContext"
 
 const Signup = () => {
   const [userType, setUserType] = React.useState("client")
-  const [userData, setUserData] = React.useState({ name: '', email: '', password: '', phone: '', address: '' })
+  const [userData, setUserData] = React.useState({ name: '', email: '', password: '', phone: '', address: '', specialty: ''})
   const { actions } = React.useContext(Context)
 
   const handleChange = (e) => {
@@ -47,17 +47,13 @@ const Signup = () => {
       </div>
 
       {userType === "client" ?
-        <form onSubmit={(e) => (actions.signupClient(e, userData))} className="m-auto border border-1" style={{ width: "400px" }}>
+        <form onSubmit={(e) => (actions.signup(e, userData, userType))} className="m-auto border border-1" style={{ width: "400px" }}>
           <CommonFields userData={userData} handleChange={handleChange} />
-          <select name="players">
-            <option value={""} selected hidden>Lawyer Type</option>
-            <option value={"lebron"}>Lebron</option>
-            <option value={"curry"}>Curry</option>
-          </select>
         </form>
         :
-        <form onSubmit={(e) => (actions.signupClient(e, userData))} className="m-auto border border-1" style={{ width: "400px" }}>
+        <form onSubmit={(e) => (actions.signup(e, userData, userType))} className="m-auto border border-1" style={{ width: "400px" }}>
           <CommonFields userData={userData} handleChange={handleChange} />
+          <input name="specialty" value={userData.specialty} type="text" placeholder="specialty" onChange={handleChange}/>
         </form>
       }
     </>
