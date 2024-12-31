@@ -1,115 +1,66 @@
-import React, { useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import React, { useActionState, useContext } from "react";
+import { LoginInputs } from "../component/login.js";
+import { Context } from "../store/appContext.js";
 
 const Login = () => {
-  const navigate = useNavigate();
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-  const [message, setMessage] = useState('');
+  const [clientData, setClientData] = React.useState({ email: '', password: '' })
+  const [lawyerData, setLawyerData] = React.useState({ email: '', password: '' })
+  const { actions } = useContext(Context)
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
+  const handleChange = (e, userType) => {
+      let { name, value } = e.target
 
-    // Test credentials for both user types
-    const testCredentials = {
-      client: {
-        email: 'client@test.com',
-        password: 'client123'
-      },
-      lawyer: {
-        email: 'lawyer@test.com',
-        password: 'lawyer123'
+      if(name !== "password"){
+        value = value.toUpperCase()
       }
-    };
 
-    if (email === testCredentials.client.email && password === testCredentials.client.password) {
-      setMessage('Login successful!');
-      localStorage.setItem('userType', 'client');
-      setTimeout(() => {
-        navigate('/client');
-      }, 1500);
-    } else if (email === testCredentials.lawyer.email && password === testCredentials.lawyer.password) {
-      setMessage('Login successful!');
-      localStorage.setItem('userType', 'lawyer');
-      setTimeout(() => {
-        navigate('/lawyer');
-      }, 1500);
+    if (userType === "Client") {
+      setClientData(prev => ({ ...prev, [name]: value }))
     } else {
-      setMessage('Invalid credentials');
+      setLawyerData(prev => ({ ...prev, [name]: value }))
     }
-  };
+  }
 
   return (
-    <div className="container mt-5">
-      <div className="row justify-content-center">
-        <div className="col-md-6 col-lg-4">
-          <div className="card shadow-sm">
-            <div className="card-body p-4">
-              <h2 className="text-center mb-4">Welcome Back</h2>
+    <div className="d-flex">
+      <form
+        onSubmit={(e) => (actions.login(e, clientData, "Client"))}
+        style={{ height: "440px", width: "440px", margin: "80px auto 0px auto" }}
+        className="border border-2 d-flex flex-column rounded">
 
-              <form onSubmit={handleSubmit}>
-                <div className="mb-3">
-                  <label className="form-label">Email address</label>
-                  <input
-                    type="email"
-                    className="form-control form-control-lg"
-                    placeholder="Enter your email"
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
-                  />
-                </div>
+        <LoginInputs clientData={clientData} handleChange={handleChange} userType={"Client"} />
+        <button
+          type='btn'
+          style={{ width: "350px", margin: "30px auto 0px auto" }}
+          className='btn btn-primary border'
+        >
+          Login
+        </button>
 
-                <div className="mb-4">
-                  <label className="form-label">Password</label>
-                  <input
-                    type="password"
-                    className="form-control form-control-lg"
-                    placeholder="Enter your password"
-                    value={password}
-                    onChange={(e) => setPassword(e.target.value)}
-                  />
-                </div>
+      </form>
 
-                <div className="mb-4 form-check">
-                  <input
-                    type="checkbox"
-                    className="form-check-input"
-                    id="rememberMe"
-                  />
-                  <label className="form-check-label" htmlFor="rememberMe">
-                    Remember me
-                  </label>
-                </div>
 
-                <button
-                  type="submit"
-                  className="btn btn-primary btn-lg w-100 mb-3"
-                >
-                  Login
-                </button>
+      <form
+        onSubmit={(e) => (actions.login(e, lawyerData, "Lawyer"))}
+        style={{ height: "440px", width: "440px", margin: "80px auto 0px auto" }}
+        className="border border-2 d-flex flex-column rounded">
 
-                <div className="text-center">
-                  <small className="text-muted">
-                    Don't have an account?{" "}
-                    <Link to="/signup" className="text-decoration-none">
-                      Sign up
-                    </Link>
-                  </small>
-                </div>
-              </form>
-            </div>
-          </div>
+        <LoginInputs lawyerData={lawyerData} handleChange={handleChange} userType={"Lawyer"} />
+        <button
+          type='btn'
+          style={{ width: "350px", margin: "30px auto 0px auto" }}
+          className='btn btn-primary border'
+        >
+          Login
+        </button>
 
-          {/* Optional: Forgot Password Link */}
-          <div className="text-center mt-3">
-            <Link to="/forgot-password" className="text-decoration-none">
-              Forgot your password?
-            </Link>
-          </div>
-        </div>
-      </div>
+      </form>
     </div>
-  );
+
+
+
+  )
+
 }
 
 export default Login;
