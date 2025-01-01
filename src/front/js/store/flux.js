@@ -5,6 +5,7 @@ import { Navigate } from "react-router-dom";
 const getState = ({ getStore, getActions, setStore }) => {
 	return {
 		store: {
+			profilePicture: "",
             lawyers: {
               "Family":[
                 {
@@ -116,6 +117,8 @@ const getState = ({ getStore, getActions, setStore }) => {
 
 					if (response.status === 200) {
 						localStorage.setItem("JWT", token)
+						const lawyers = await getActions().displayLawyers()
+						localStorage.setItem("lawyers", JSON.stringify(lawyers))
 						window.location.href = "/client"
 					}
 					else if (response.status === 401){
@@ -124,7 +127,11 @@ const getState = ({ getStore, getActions, setStore }) => {
 					
 				})
 			},
-
+			displayLawyers: async()=>{
+				const result = await fetch("https://opulent-lamp-jj4gvp4qrrxq3qwr6-3001.app.github.dev/api/display")
+				const data =  await result.json()
+				return data
+			},
 			verifyJwt: async ()=>{
 				const token = localStorage.getItem("JWT")
 

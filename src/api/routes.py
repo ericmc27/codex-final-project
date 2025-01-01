@@ -68,6 +68,11 @@ def add_new_lawyer():
         db.session.commit()
         return jsonify({"message": "User added"}), 201
 
+@api.route("/display", methods=['GET'])
+def display_lawyers():
+    lawyers = Lawyers.query.filter_by(specialty="family")
+    lawyers_data = [{"name":lawyer.name} for lawyer in lawyers]
+    return jsonify(lawyers_data)
 
 @api.route("/login", methods=['POST'])
 def login():
@@ -91,6 +96,5 @@ def login():
 @api.route("/verify", methods=["GET"])
 @jwt_required()
 def check():
-    print(get_jwt())
     token = request.headers.get("Authorization").split(' ')[1]
     return jsonify(token)
