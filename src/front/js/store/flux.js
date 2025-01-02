@@ -6,35 +6,6 @@ const getState = ({ getStore, getActions, setStore }) => {
 	return {
 		store: {
 			profilePicture: "",
-            lawyers: {
-              "Family":[
-                {
-                  id: 1,
-                  name: "Eric",
-                },
-                {
-                  id: 2,
-                  name: "Diego",
-                },
-                {
-                  id: 3,
-                  name: "Jose",
-                },
-              ],
-              "Immigration": [
-                {
-                  id: 1,
-                  name: "Lebron",
-                },
-              ],
-              "Food": [
-                {
-                  id: 1,
-                  name: "Maria",
-                }
-              ]
-            },
-            
            lawyersType: [
               "Family",
               "Immigration",
@@ -125,6 +96,20 @@ const getState = ({ getStore, getActions, setStore }) => {
 						alert(data.message)
 					}
 					
+				})
+			},
+			getToken: ()=>{
+				return localStorage.getItem("JWT")
+			},
+			storeProfilePicture: async (form)=>{
+				const token = await getActions().getToken()
+
+				fetch("https://opulent-lamp-jj4gvp4qrrxq3qwr6-3001.app.github.dev/picture", {
+					method: 'POST',
+					body: form,
+					headers: {
+						'Authorization': `Bearer ${token}`
+					}
 				})
 			},
 			displayLawyers: async()=>{

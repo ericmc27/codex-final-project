@@ -2,10 +2,11 @@
 This module takes care of starting the API Server, Loading the DB and Adding the endpoints
 """
 from flask import Flask, request, jsonify, url_for, Blueprint
-from flask_jwt_extended import create_access_token, jwt_required, get_jwt_identity, get_jwt
+from flask_jwt_extended import create_access_token, jwt_required
 from api.models import db, Clients, Lawyers
 from api.utils import generate_sitemap, APIException
 from flask_cors import CORS
+
 
 
 api = Blueprint('api', __name__)
@@ -71,7 +72,7 @@ def add_new_lawyer():
 @api.route("/display", methods=['GET'])
 def display_lawyers():
     lawyers = Lawyers.query.filter_by(specialty="family")
-    lawyers_data = [{"name":lawyer.name} for lawyer in lawyers]
+    lawyers_data = [{"name":lawyer.name, "photo":lawyer.photo} for lawyer in lawyers]
     return jsonify(lawyers_data)
 
 @api.route("/login", methods=['POST'])
@@ -88,7 +89,7 @@ def login():
     if not user_exists or not user_exists.check_password(password):
         return jsonify({"message":"login failed"}), 401
     else:
-        claims = {"id":user_exists.id}
+        claims = {"id":user_exists.id, "user_type": user_type}
         token = create_access_token(identity=user_exists.name, additional_claims=claims)
         return jsonify(token), 200
     
@@ -98,3 +99,4 @@ def login():
 def check():
     token = request.headers.get("Authorization").split(' ')[1]
     return jsonify(token)
+

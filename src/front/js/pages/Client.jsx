@@ -47,6 +47,7 @@ const Client = () => {
               <>
                 <div style={{ width: "350px", height: "130px", marginTop: index === 0 && "50px" }} className="border">
                   {lawyer.name}
+                  <img src={`/camera.png`}/>
                   {/* <button onClick={() => (navigate(`/profile`, { state: { id: lawyer.id, category: lawyerType, name: lawyer.name } }))}>see profile</button> */}
                 </div>
               </>
