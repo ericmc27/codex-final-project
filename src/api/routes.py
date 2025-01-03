@@ -38,9 +38,10 @@ def add_new_client():
     password = data.get("password")
     phone = data.get("phone")
     address = data.get("address")
+    areaOfNeed = data.get("areaOfNeed")
 
     # Create a new client instance
-    new_user = Clients(name=name, email=email, password=password, phone=phone, address=address)
+    new_user = Clients(name=name, email=email, password=password, phone=phone, address=address, areaOfNeed=areaOfNeed)
 
     # Check for duplicate email
     user_exists = Clients.query.filter_by(email=email).first()
