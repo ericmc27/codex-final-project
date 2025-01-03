@@ -40,6 +40,7 @@ const Signup = () => {
         />
 
         <label className="form-check-label" htmlFor="flexSwitchCheckDefault">Client</label>
+        <label className="form-check-label" htmlFor="flexSwitchCheckDefault">Client</label>
 
         <input
           onChange={changeUserType}
@@ -49,6 +50,7 @@ const Signup = () => {
           checked={userType === "lawyer"}
         />
 
+        <label className="form-check-label" htmlFor="flexSwitchCheckDefault">Lawyer</label>
         <label className="form-check-label" htmlFor="flexSwitchCheckDefault">Lawyer</label>
       </div>
 
