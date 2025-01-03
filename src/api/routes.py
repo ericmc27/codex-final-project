@@ -51,7 +51,7 @@ def add_new_lawyer():
     phone = data.get("phone")
     address = data.get("address")
     photo = data.get("photo")
-    specialty = data.get("specialty")
+    specialty = data.get("specialty").title()
 
     # Create a new client instance
 
@@ -69,10 +69,14 @@ def add_new_lawyer():
         db.session.commit()
         return jsonify({"message": "User added"}), 201
 
-@api.route("/display", methods=['GET'])
+@api.route("/display", methods=['POST'])
 def display_lawyers():
-    lawyers = Lawyers.query.filter_by(specialty="family")
-    lawyers_data = [{"name":lawyer.name, "photo":lawyer.photo} for lawyer in lawyers]
+    data = request.get_json()
+    lawyer_type = data.get("lawyerType")
+    lawyers = Lawyers.query.filter_by(specialty=lawyer_type).filter(Lawyers.photo.isnot(None))
+    # lawyers_data = [{lawyer_type:[]}]
+    # lawyers_data[0][lawyer_type].extend([{"name":lawyer.name, "photo":lawyer.photo, "type":lawyer.specialty} for lawyer in lawyers])
+    lawyers_data = [{"name":lawyer.name, "photo":lawyer.photo, "type":lawyer.specialty} for lawyer in lawyers]
     return jsonify(lawyers_data)
 
 @api.route("/login", methods=['POST'])
@@ -100,3 +104,5 @@ def check():
     token = request.headers.get("Authorization").split(' ')[1]
     return jsonify(token)
 
+
+    
