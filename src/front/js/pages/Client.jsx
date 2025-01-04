@@ -1,7 +1,7 @@
 import React from "react"
 import { BounceLoader } from "react-spinners"
 import { Context } from "../store/appContext"
-import { useNavigate } from "react-router-dom"
+
 
 export const ProtectedClient = ({ children }) => {
   const { actions } = React.useContext(Context)
@@ -9,8 +9,8 @@ export const ProtectedClient = ({ children }) => {
 
   React.useEffect(() => {
     const verify = async () => {
-      const data = await actions.verifyJwt()
-      setToken(data)
+      const token = await actions.verifyJwt()
+      setToken(token)
     }
     verify()
   }, [])
@@ -26,26 +26,21 @@ export const ProtectedClient = ({ children }) => {
 }
 
 const Client = () => {
-  const [lawyerType, setLawyerType] = React.useState("Family")
   const { store, actions } = React.useContext(Context)
-  const [lawyerList, setLawyerList] = React.useState(JSON.parse(localStorage.getItem("lawyers")))
+  const [lawyerList, setLawyerList] = React.useState(()=>(JSON.parse(localStorage.getItem("lawyers"))))
+  const [areaOfNeed, setAreaOfNeed] = React.useState(()=>(localStorage.getItem("Area of Need")))
   const { lawyersType } = store
-
-
+  
   const changeLawyerType = async (type) => {
+    setAreaOfNeed(type)
     await actions.displayLawyers(type)
-    setLawyerType(type)
-  }
-
-  React.useEffect(()=>{
     setLawyerList(JSON.parse(localStorage.getItem("lawyers")))
-  }, [lawyerType])
+  }
 
   return (
     <div className="container d-flex justify-content-center">
 
       <div className="d-flex flex-column gap-4">
-      {/* lawyerList[0][lawyerType].map((lawyer, index) */}
         {
           lawyerList.map((lawyer, index) => {
             return (
@@ -54,7 +49,7 @@ const Client = () => {
                 <img className="rounded" width={"300px"} height={"250px"} src={`/${lawyer.photo}`}/>
 
                   <h3 className="m-auto">{lawyer.name}</h3>
-                  {/* <button onClick={() => (navigate(`/profile`, { state: { id: lawyer.id, category: lawyerType, name: lawyer.name } }))}>see profile</button> */}
+                  <button onClick={() => (navigate(`/profile`, { state: { id: lawyer.id, category: lawyerType, name: lawyer.name } }))}>see profile</button>
                 </div>
               </>
             )
@@ -66,7 +61,7 @@ const Client = () => {
       <ul style={{ top: "150px", left: "90%", width: "150px", height: "250px" }} className="ul-lawyer-types rounded list-unstyled border position-absolute">
         {
           lawyersType.map((lawyer, index) => {
-            return <li role="button" onClick={() => (changeLawyerType(lawyer))}><div style={{ height: "15px", width: "15px", backgroundColor: index === lawyersType.indexOf(lawyerType) && "#3E362E" }} className="border rounded-circle"></div>{lawyer}</li>
+            return <li key={index} role="button" onClick={() => (changeLawyerType(lawyer))}><div style={{ height: "15px", width: "15px", backgroundColor: index === lawyersType.indexOf(areaOfNeed) && "#3E362E" }} className="border rounded-circle"></div>{lawyer}</li>
           })
         }
       </ul>

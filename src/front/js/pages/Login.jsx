@@ -37,7 +37,7 @@ const Login = () => {
         >
           Login
         </button>
-        <label className="m-auto">Don't have an account? <Link className="text-decoration-none" to={"/signup"} from={"/login"}>Sign up</Link></label>
+        <label className="m-auto">Don't have an account? <Link className="text-decoration-none" to={"/signup"} state={{userType:"Client"}}>Sign up</Link></label>
       </form>
 
 
@@ -54,7 +54,7 @@ const Login = () => {
         >
           Login
         </button>
-        <label className="m-auto">Don't have an account? <Link className="text-decoration-none" to={"/signup"} from={"/login"}>Sign up</Link></label>
+        <label className="m-auto">Don't have an account? <Link className="text-decoration-none" to={"/signup"} state={{userType:"Lawyer"}}>Sign up</Link></label>
       </form>
     </div>
 

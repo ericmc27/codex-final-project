@@ -1,71 +1,84 @@
 import { element } from "prop-types";
-import { use } from "react";
-import { Navigate } from "react-router-dom";
 
 const getState = ({ getStore, getActions, setStore }) => {
 	return {
 		store: {
-           lawyersType: [
-              "Family",
-              "Immigration",
-              "Food"
-            ]
-            
+			lawyersType: [
+				"Corporate and Business",
+				"Criminal",
+				"Family",
+				"Immigration",
+				"Intellectual Property",
+				"Personal Injury",
+				"Real Estate",
+				"Employment and Labor",
+				"Environmental",
+				"Tax",
+				"Health",
+				"Bankruptcy",
+				"Civil Rights",
+				"Estate Planning and Probate",
+				"Technology and Cybersecurity",
+				"Entertainment and Sports",
+				"Education",
+				"Maritime",
+				"International",
+				"Elder"
+			]
 		},
 		actions: {
-			signup: async (e, {name, email, password, phone, address, specialty}, userType)=>{
+			signup: async (e, { name, email, password, phone, address, areaOfNeed, specialty }, userType) => {
 				e.preventDefault();
-				let newContact
+				let newContact;
 
-				if(userType === "client"){
+				if (userType === "Client") {
 					newContact = {
 						name: name.toLowerCase(),
 						email: email.toLowerCase(),
 						password,
 						phone,
-						address: address.toLowerCase(),
-						user_type: userType
+						address,
+						areaOfNeed,
 					}
-				}else{
+				} else {
 					newContact = {
 						name: name.toLowerCase(),
 						email: email.toLowerCase(),
 						password,
 						phone,
-						address: address.toLowerCase(),
+						address,
 						photo: null,
-						specialty: specialty.toLowerCase(),
-						user_type: userType
+						specialty,
 					}
 				}
-			
+
 				let options = {
 					method: 'POST',
-					body: JSON.stringify(newContact), 
+					body: JSON.stringify(newContact),
 					headers: {
 						'Content-Type': 'application/json'
 					}
 				}
 
-				fetch(`https://opulent-lamp-jj4gvp4qrrxq3qwr6-3001.app.github.dev/api/${userType}s`, options)
-				.then(response => {
-					if (!response.ok) {
-						throw Error("Error. Unable to post new contact.");
-					}
-					return response.json();
-				})
-				.then(data => {
-					if (data.message === "Account exists") {
-						alert("Oops! An account already exists with that email. ")
-					}else{
-						alert("User added")
-					}
+				fetch(`https://opulent-lamp-jj4gvp4qrrxq3qwr6-3001.app.github.dev/api/${userType.toLowerCase()}s`, options)
+					.then(response => {
+						if (!response.ok) {
+							throw Error("Error. Unable to post new contact.");
+						}
+						return response.json();
+					})
+					.then(data => {
+						if (data.message === "Account exists") {
+							alert("Oops! An account already exists with that email. ")
+						} else {
+							alert("User added")
+						}
 
-				})
-				.catch(error => {console.log("More info on error: ", error)})
+					})
+					.catch(error => { console.log("More info on error: ", error) })
 
 			},
-			login: (e, {email, password}, userType)=>{
+			login: (e, { email, password }, userType) => {
 				e.preventDefault()
 
 				const userData = {
@@ -82,24 +95,32 @@ const getState = ({ getStore, getActions, setStore }) => {
 					}
 				}
 				fetch("https://opulent-lamp-jj4gvp4qrrxq3qwr6-3001.app.github.dev/api/login", options)
-				.then(async response=>{
-					const token = await response.json();
+					.then(async response => {
 
-					if (response.status === 200) {
-						localStorage.setItem("JWT", token)
-						await getActions().displayLawyers("Family")
-						window.location.href = "/client"
-					}
-					else if (response.status === 401){
-						alert(data.message)
-					}
-					
-				})
+						if (response.status === 200) {
+							const data = await response.json();
+							localStorage.setItem("JWT", data.token)
+
+							if (data.userType === "Client") {
+								localStorage.setItem("Area of Need", data.need)
+								await getActions().displayLawyers(data.need)
+								window.location.href = "/client"
+							} else {
+								localStorage.setItem("Specialty", data.specialty)
+								window.location.href = "/lawyer"
+							}
+						}
+						else if (response.status === 401) {
+							const data = await response.json()
+							alert(data.message)
+						}
+
+					})
 			},
-			getToken: ()=>{
+			getToken: () => {
 				return localStorage.getItem("JWT")
 			},
-			storeProfilePicture: async (form)=>{
+			storeProfilePicture: async (form) => {
 				const token = await getActions().getToken()
 
 				fetch("https://opulent-lamp-jj4gvp4qrrxq3qwr6-3001.app.github.dev/picture", {
@@ -110,8 +131,8 @@ const getState = ({ getStore, getActions, setStore }) => {
 					}
 				})
 			},
-			displayLawyers: async(lawyerType)=>{
-				const body = {lawyerType}
+			displayLawyers: async (lawyerType) => {
+				const body = { lawyerType }
 				const options = {
 					method: 'POST',
 					body: JSON.stringify(body),
@@ -120,11 +141,11 @@ const getState = ({ getStore, getActions, setStore }) => {
 					}
 				}
 				const result = await fetch("https://opulent-lamp-jj4gvp4qrrxq3qwr6-3001.app.github.dev/api/display", options)
-				const data =  await result.json()
+				const data = await result.json()
 				localStorage.setItem("lawyers", JSON.stringify(data))
 			},
-			verifyJwt: async ()=>{
-				const token = localStorage.getItem("JWT")
+			verifyJwt: async () => {
+				let token = getActions().getToken()
 
 				const options = {
 					method: "GET",
@@ -134,13 +155,13 @@ const getState = ({ getStore, getActions, setStore }) => {
 				}
 
 				const result = await fetch("https://opulent-lamp-jj4gvp4qrrxq3qwr6-3001.app.github.dev/api/verify", options)
-				if([422, 401].includes(result.status)){
+				if ([422, 401].includes(result.status)) {
 					window.location.href = "/login"
 					return
 				}
-			
-				const data = await result.json()
-				return data
+
+				token = await result.json()
+				return token
 			}
 		}
 	};
