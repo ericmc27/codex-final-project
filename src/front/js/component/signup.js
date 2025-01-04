@@ -4,17 +4,19 @@ import React from "react"
 export const CommonFields = ({ userData, handleChange }) => {
   return (
     <>
-      <label className="form-label" htmlFor="name">Name</label>
+      <label className="form-label mt-2" htmlFor="name">Name</label>
       <input
         id="name"
         className="form-control"
-        type="text" name="name"
+        type="text"
+        name="name"
         value={userData.name}
         onChange={handleChange}
         required
+        style={{width:"300px"}}
       />
 
-      <label className="form-label" htmlFor="email">Email</label>
+      <label className="form-label mt-2" htmlFor="email">Email</label>
       <input
         id="email"
         className="form-control"
@@ -22,9 +24,10 @@ export const CommonFields = ({ userData, handleChange }) => {
         value={userData.email}
         onChange={handleChange}
         required
+        style={{width:"300px"}}
       />
 
-      <label className="form-label" htmlFor="password">Password</label>
+      <label className="form-label mt-2" htmlFor="password">Password</label>
       <input
         id="password"
         className="form-control"
@@ -33,9 +36,10 @@ export const CommonFields = ({ userData, handleChange }) => {
         value={userData.password}
         onChange={handleChange}
         required
+        style={{width:"300px"}}
       />
 
-      <label className="form-label" htmlFor="phone">Phone</label>
+      <label className="form-label mt-2" htmlFor="phone">Phone</label>
       <input
         id="phone"
         className="form-control"
@@ -44,9 +48,10 @@ export const CommonFields = ({ userData, handleChange }) => {
         value={userData.phone}
         onChange={handleChange}
         required
+        style={{width:"300px"}}
       />
 
-      <label className="form-label" htmlFor="address">Address</label>
+      <label className="form-label mt-2" htmlFor="address">Address</label>
       <input
         id="address"
         className="form-control"
@@ -55,80 +60,75 @@ export const CommonFields = ({ userData, handleChange }) => {
         value={userData.address}
         onChange={handleChange}
         required
+        style={{width:"300px"}}
       />
     </>
   )
 }
 
-export const AreaOfNeed = ({ areaOfNeed, handleChange }) => {
+export const AreaOfNeed = ({ userData, handleChange }) => {
   return (
     <>
-      <label htmlFor="areaOfNeed">Which area of specialty do you need help with?</label>
+      <label className="mt-3 mb-1" htmlFor="areaOfNeed">I NEED HELP WITH</label>
 
-      <select name="areaOfNeed" id="areaOfNeed" onChange={handleChange} required>
-        <option value="" disabled>
-          -- Select an area of need --
-        </option>
-        <option value="corporateBusiness">Corporate and Business Law</option>
-        <option value="criminal">Criminal Law</option>
-        <option value="family">Family Law</option>
-        <option value="immigration">Immigration Law</option>
-        <option value="intellectualProperty">Intellectual Property Law</option>
-        <option value="personalInjury">Personal Injury Law</option>
-        <option value="realEstate">Real Estate Law</option>
-        <option value="employmentLabor">Employment and Labor Law</option>
-        <option value="environmental">Environmental Law</option>
-        <option value="tax">Tax Law</option>
-        <option value="health">Health Law</option>
-        <option value="bankruptcy">Bankruptcy Law</option>
-        <option value="civilRights">Civil Rights Law</option>
-        <option value="estateProbate">Estate Planning and Probate Law</option>
-        <option value="tech">Technology and Cybersecurity Law</option>
-        <option value="entertainmentSports">Entertainment and Sports Law</option>
-        <option value="education">Education Law</option>
-        <option value="maritime">Maritime and Admiralty Law</option>
-        <option value="international">International Law</option>
-        <option value="elder">Elder Law</option>
+      <select name="areaOfNeed" id="areaOfNeed" value={userData.areaOfNeed} onChange={handleChange} required>
+        <option value="" disabled>-- Select an area of need --</option>
+        <option value="Corporate and Business">Corporate and Business Law</option>
+        <option value="Criminal">Criminal Law</option>
+        <option value="Family">Family Law</option>
+        <option value="Immigration">Immigration Law</option>
+        <option value="Intellectual Property">Intellectual Property Law</option>
+        <option value="Personal Injury">Personal Injury Law</option>
+        <option value="Real Estate">Real Estate Law</option>
+        <option value="Employment and Labor">Employment and Labor Law</option>
+        <option value="Environmental">Environmental Law</option>
+        <option value="Tax">Tax Law</option>
+        <option value="Health">Health Law</option>
+        <option value="Bankruptcy">Bankruptcy Law</option>
+        <option value="Civil Rights">Civil Rights Law</option>
+        <option value="Estate Planning and Probate">Estate Planning and Probate Law</option>
+        <option value="Technology and Cybersecurity">Technology and Cybersecurity Law</option>
+        <option value="Entertainment and Sports">Entertainment and Sports Law</option>
+        <option value="Education">Education Law</option>
+        <option value="Maritime">Maritime and Admiralty Law</option>
+        <option value="International">International Law</option>
+        <option value="Elder">Elder Law</option>
       </select>
-    
-      <div>
-        <button type="submit">Signup</button>
-      </div>
     </>
   )
 }
 
-export const LawyerFields = ({ lawyerFields, handleChange }) => {
+export const LawyerFields = ({ userData, handleChange }) => {
   return (
     <>
       <label htmlFor="specialty">Select up to 5 areas where you specialize (hold Ctrl to select multiple): </label>
 
-      <select name="specialty" id="specialty" multiple size="5" onChange={handleChange} required>
-        <option value="" disabled>-- Select areas of specialty --</option>
-        <option value="corporateBusiness">Corporate and Business Law</option>
-        <option value="criminal">Criminal Law</option>
-        <option value="family">Family Law</option>
-        <option value="immigration">Immigration Law</option>
-        <option value="intellectualProperty">Intellectual Property Law</option>
-        <option value="personalInjury">Personal Injury Law</option>
-        <option value="realEstate">Real Estate Law</option>
-        <option value="employmentLabor">Employment and Labor Law</option>
-        <option value="environmental">Environmental Law</option>
-        <option value="tax">Tax Law</option>
-        <option value="health">Health Law</option>
-        <option value="bankruptcy">Bankruptcy Law</option>
-        <option value="civilRights">Civil Rights Law</option>
-        <option value="estateProbate">Estate Planning and Probate Law</option>
-        <option value="tech">Technology and Cybersecurity Law</option>
-        <option value="entertainmentSports">Entertainment and Sports Law</option>
-        <option value="education">Education Law</option>
-        <option value="maritime">Maritime and Admiralty Law</option>
-        <option value="international">International Law</option>
-        <option value="elder">Elder Law</option>
+      <select name="specialty" id="specialty" value={userData.specialty} onChange={handleChange} required>
+      <option value="" disabled>-- Select an area of need --</option>
+        <option value="Corporate and Business">Corporate and Business Law</option>
+        <option value="Criminal">Criminal Law</option>
+        <option value="Family">Family Law</option>
+        <option value="Immigration">Immigration Law</option>
+        <option value="Intellectual Property">Intellectual Property Law</option>
+        <option value="Personal Injury">Personal Injury Law</option>
+        <option value="Real Estate">Real Estate Law</option>
+        <option value="Employment and Labor">Employment and Labor Law</option>
+        <option value="Environmental">Environmental Law</option>
+        <option value="Tax">Tax Law</option>
+        <option value="Health">Health Law</option>
+        <option value="Bankruptcy">Bankruptcy Law</option>
+        <option value="Civil Rights">Civil Rights Law</option>
+        <option value="Estate Planning and Probate">Estate Planning and Probate Law</option>
+        <option value="Technology and Cybersecurity">Technology and Cybersecurity Law</option>
+        <option value="Entertainment and Sports">Entertainment and Sports Law</option>
+        <option value="Education">Education Law</option>
+        <option value="Maritime">Maritime and Admiralty Law</option>
+        <option value="International">International Law</option>
+        <option value="Elder">Elder Law</option>
       </select>
       <br></br>
 
-      <label className="form-label" htmlFor="barNumber">Bar ID Number</label>
+      {/* <label className="form-label" htmlFor="barNumber">Bar ID Number</label>
       <input
         id="barNumber"
         className="form-control"
@@ -147,18 +147,6 @@ export const LawyerFields = ({ lawyerFields, handleChange }) => {
         name="lawFirm"
         value={lawyerFields.lawFirm}
         onChange={handleChange}
-      />
-
-      {/* ?? How to combat SQL Injection ?? */}
-      <label className="form-label" htmlFor="professionalExperience">Professional Experience</label>
-      <input
-        id="professionalExperience"
-        className="form-control"
-        type="text"
-        name="professionalExperience"
-        value={lawyerFields.professionalExperience}
-        onChange={handleChange}
-        required
       />
 
       <fieldset>
@@ -197,7 +185,7 @@ export const LawyerFields = ({ lawyerFields, handleChange }) => {
 
       <div>
         <button type="submit">Signup</button>
-      </div>
+      </div> */}
 
 
     </>

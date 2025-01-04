@@ -3,24 +3,31 @@ This module takes care of starting the API Server, Loading the DB and Adding the
 """
 import os
 from flask import Flask, request, jsonify, url_for, send_from_directory
+from PIL import Image
+from flask_cors import CORS
 from flask_migrate import Migrate
 from flask_swagger import swagger
 from api.utils import APIException, generate_sitemap
-from api.models import db
+from api.models import db, Lawyers
 from api.routes import api
 from api.admin import setup_admin
 from api.commands import setup_commands
-from flask_jwt_extended import JWTManager
+from flask_jwt_extended import JWTManager, jwt_required, get_jwt
+import datetime
 
 # from models import Person
+
+
 
 ENV = "development" if os.getenv("FLASK_DEBUG") == "1" else "production"
 static_file_dir = os.path.join(os.path.dirname(
     os.path.realpath(__file__)), '../public/')
 app = Flask(__name__)
 app.url_map.strict_slashes = False
-
+CORS(app)
 app.config["JWT_SECRET_KEY"] = "superman"
+app.config["UPLOAD_FOLDER"] = "public"
+app.config["JWT_ACCESS_TOKEN_EXPIRES"] = datetime.timedelta(minutes=20)
 jwt = JWTManager(app)
 
 # database condiguration
@@ -69,6 +76,27 @@ def serve_any_other_file(path):
     response.cache_control.max_age = 0  # avoid cache memory
     return response
 
+
+@app.route("/picture", methods=["POST"])
+@jwt_required()
+def store_picture():
+    upload_folder = os.path.join(os.getcwd(), app.config['UPLOAD_FOLDER'])
+
+    if not os.path.exists(upload_folder):
+        os.mkdir(upload_folder)
+
+
+    identity = get_jwt()
+    user = Lawyers.query.filter_by(id=identity["id"]).first()
+    file = request.files['file']
+    filename = os.path.splitext(file.filename)[0] + ".png"
+    store_file = os.path.join(upload_folder, filename)
+    img = Image.open(file)
+    img.save(store_file, 'PNG')
+    user.photo = filename
+    db.session.commit()
+
+    return jsonify({"test":"hello"})
 
 # this only runs if `$ python src/main.py` is executed
 if __name__ == '__main__':
