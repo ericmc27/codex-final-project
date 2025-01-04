@@ -67,7 +67,7 @@ def display_lawyers():
     data = request.get_json()
     lawyer_type = data.get("lawyerType")
     lawyers = Lawyers.query.filter_by(specialty=lawyer_type).filter(Lawyers.photo.isnot(None))
-    lawyers_data = [{"name":lawyer.name, "photo":lawyer.photo} for lawyer in lawyers]
+    lawyers_data = [{"id":lawyer.id, "name":lawyer.name, "photo":lawyer.photo} for lawyer in lawyers]
     return jsonify(lawyers_data)
 
 @api.route("/login", methods=['POST'])
@@ -85,7 +85,7 @@ def login():
         if user_exists:
             claims = {"id":user_exists.id}
             token = create_access_token(identity=user_exists.name, additional_claims=claims)
-            json_data = jsonify({"token":token, "specialty":user_exists.specialty,})
+            json_data = jsonify({"token":token, "specialty":user_exists.specialty, "photo":user_exists.photo})
 
     if not user_exists or not user_exists.check_password(password):
         return jsonify({"message":"login failed"}), 401
@@ -100,8 +100,3 @@ def check():
     token = request.headers.get("Authorization").split(' ')[1]
     return jsonify(token)
 
-
-
-
-
-    

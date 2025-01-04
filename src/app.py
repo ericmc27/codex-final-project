@@ -2,6 +2,7 @@
 This module takes care of starting the API Server, Loading the DB and Adding the endpoints
 """
 import os
+import uuid
 from flask import Flask, request, jsonify, url_for, send_from_directory
 from PIL import Image
 from flask_cors import CORS
@@ -26,7 +27,7 @@ app = Flask(__name__)
 app.url_map.strict_slashes = False
 CORS(app)
 app.config["JWT_SECRET_KEY"] = "superman"
-app.config["UPLOAD_FOLDER"] = "public"
+app.config["UPLOAD_FOLDER"] = "public/"
 app.config["JWT_ACCESS_TOKEN_EXPIRES"] = datetime.timedelta(minutes=20)
 jwt = JWTManager(app)
 
@@ -85,18 +86,17 @@ def store_picture():
     if not os.path.exists(upload_folder):
         os.mkdir(upload_folder)
 
-
     identity = get_jwt()
     user = Lawyers.query.filter_by(id=identity["id"]).first()
     file = request.files['file']
-    filename = os.path.splitext(file.filename)[0] + ".png"
+    filename = f"{os.path.splitext(file.filename)[0]}-{uuid.uuid4()}" + ".png"
     store_file = os.path.join(upload_folder, filename)
     img = Image.open(file)
     img.save(store_file, 'PNG')
     user.photo = filename
     db.session.commit()
 
-    return jsonify({"test":"hello"})
+    return jsonify({"photo": filename}), 200
 
 # this only runs if `$ python src/main.py` is executed
 if __name__ == '__main__':
