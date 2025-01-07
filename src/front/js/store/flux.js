@@ -133,8 +133,8 @@ const getState = ({ getStore, getActions, setStore }) => {
 				})
 				.then(async response=>{
 					const data = await response.json()
-					console.log(data)
-					return data.photo
+					localStorage.setItem("Profile Picture", data.photo)
+					
 				})
 
 			},

@@ -44,19 +44,18 @@ const Client = () => {
         <h4 style={{margin:"25px 0px 50px 0px"}}>{areaOfNeed} Lawyers</h4>
         <div className="d-flex flex-column gap-4">
           {
-            lawyerList.map((lawyer, index) => {
+            lawyerList?.map((lawyer, index) => {
               return (
                 <>
                   <div key={index} style={{ width: "600px", height: "250px" }} className="border d-flex rounded">
                     <img className="rounded" width={"300px"} height={"250px"} src={`/${lawyer.photo}`} />
                     <h3 className="m-auto">{lawyer.name}</h3>
-                    <button onClick={() => (navigate(`/profile`, { state: { id: lawyer.id, name: lawyer.name, photo: lawyer.photo} }))}>see profile</button>
+                    <button className="btn btn-primary" onClick={() => (navigate(`/profile?id=${lawyer.id}`, { state: { id: lawyer.id, name: lawyer.name, photo: lawyer.photo} }))}>PROFILE</button>
                   </div>
                 </>
               )
             })
           }
-        {/* </div> */}
       </div>
 
 

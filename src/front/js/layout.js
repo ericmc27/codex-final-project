@@ -29,8 +29,8 @@ const Layout = () => {
                         <Route element={<Signup/>} path="/signup" />
                         <Route element={<Login />} path="/login" />
                         <Route element={<ProtectedLawyer><Lawyer/></ProtectedLawyer>} path="/lawyer" />
+                        <Route element={<ProtectedLawyer><Profile/></ProtectedLawyer>} path="/profile"/>
                         <Route element={<ProtectedClient><Client/></ProtectedClient>} path="/client" />
-                        <Route element={<Profile></Profile>} path="/profile"/>
                         <Route element={<h1>Not found!</h1>} />
                     </Routes>
                 </ScrollToTop>
