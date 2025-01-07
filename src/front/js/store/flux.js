@@ -23,7 +23,7 @@ const getState = ({ getStore, getActions, setStore }) => {
 				"Education",
 				"Maritime",
 				"International",
-				"Elder"
+				"Elder",
 			]
 		},
 		actions: {
@@ -60,7 +60,7 @@ const getState = ({ getStore, getActions, setStore }) => {
 					}
 				}
 
-				fetch(`https://opulent-lamp-jj4gvp4qrrxq3qwr6-3001.app.github.dev/api/${userType.toLowerCase()}s`, options)
+				fetch(`${process.env.BACKEND_URL}/api/${userType.toLowerCase()}s`, options)
 					.then(response => {
 						if (!response.ok) {
 							throw Error("Error. Unable to post new contact.");
@@ -94,7 +94,7 @@ const getState = ({ getStore, getActions, setStore }) => {
 						'Content-Type': 'application/json'
 					}
 				}
-				fetch("https://opulent-lamp-jj4gvp4qrrxq3qwr6-3001.app.github.dev/api/login", options)
+				fetch(`${process.env.BACKEND_URL}/api/login`, options)
 					.then(async response => {
 
 						if (response.status === 200) {
@@ -107,6 +107,7 @@ const getState = ({ getStore, getActions, setStore }) => {
 								window.location.href = "/client"
 							} else {
 								localStorage.setItem("Specialty", data.specialty)
+								localStorage.setItem("Profile Picture", data.photo)
 								window.location.href = "/lawyer"
 							}
 						}
@@ -123,13 +124,19 @@ const getState = ({ getStore, getActions, setStore }) => {
 			storeProfilePicture: async (form) => {
 				const token = await getActions().getToken()
 
-				fetch("https://opulent-lamp-jj4gvp4qrrxq3qwr6-3001.app.github.dev/picture", {
+				await fetch(`${process.env.BACKEND_URL}/picture`, {
 					method: 'POST',
 					body: form,
 					headers: {
 						'Authorization': `Bearer ${token}`
 					}
 				})
+				.then(async response=>{
+					const data = await response.json()
+					localStorage.setItem("Profile Picture", data.photo)
+					
+				})
+
 			},
 			displayLawyers: async (lawyerType) => {
 				const body = { lawyerType }
@@ -140,7 +147,7 @@ const getState = ({ getStore, getActions, setStore }) => {
 						'Content-Type': 'application/json'
 					}
 				}
-				const result = await fetch("https://opulent-lamp-jj4gvp4qrrxq3qwr6-3001.app.github.dev/api/display", options)
+				const result = await fetch(`${process.env.BACKEND_URL}/api/display`, options)
 				const data = await result.json()
 				localStorage.setItem("lawyers", JSON.stringify(data))
 			},
@@ -154,7 +161,7 @@ const getState = ({ getStore, getActions, setStore }) => {
 					}
 				}
 
-				const result = await fetch("https://opulent-lamp-jj4gvp4qrrxq3qwr6-3001.app.github.dev/api/verify", options)
+				const result = await fetch(`${process.env.BACKEND_URL}/api/verify`, options)
 				if ([422, 401].includes(result.status)) {
 					window.location.href = "/login"
 					return

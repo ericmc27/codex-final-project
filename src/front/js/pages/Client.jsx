@@ -1,6 +1,7 @@
 import React from "react"
 import { BounceLoader } from "react-spinners"
 import { Context } from "../store/appContext"
+import { useNavigate } from "react-router-dom"
 
 
 export const ProtectedClient = ({ children }) => {
@@ -27,41 +28,47 @@ export const ProtectedClient = ({ children }) => {
 
 const Client = () => {
   const { store, actions } = React.useContext(Context)
-  const [lawyerList, setLawyerList] = React.useState(()=>(JSON.parse(localStorage.getItem("lawyers"))))
-  const [areaOfNeed, setAreaOfNeed] = React.useState(()=>(localStorage.getItem("Area of Need")))
+  const navigate = useNavigate()
+  const [lawyerList, setLawyerList] = React.useState(() => (JSON.parse(localStorage.getItem("lawyers"))))
+  const [areaOfNeed, setAreaOfNeed] = React.useState(() => (localStorage.getItem("Area of Need")))
   const { lawyersType } = store
-  
+
   const changeLawyerType = async (type) => {
-    setAreaOfNeed(type)
+    setAreaOfNeed(type); localStorage.setItem("Area of Need", type)
     await actions.displayLawyers(type)
     setLawyerList(JSON.parse(localStorage.getItem("lawyers")))
   }
 
   return (
-    <div className="container d-flex justify-content-center">
-
-      <div className="d-flex flex-column gap-4">
-        {
-          lawyerList.map((lawyer, index) => {
-            return (
-              <>
-               <div style={{ width: "600px", height: "250px", marginTop: index === 0 && "50px" }} className="border d-flex rounded">
-                <img className="rounded" width={"300px"} height={"250px"} src={`/${lawyer.photo}`}/>
-
-                  <h3 className="m-auto">{lawyer.name}</h3>
-                  <button onClick={() => (navigate(`/profile`, { state: { id: lawyer.id, category: lawyerType, name: lawyer.name } }))}>see profile</button>
-                </div>
-              </>
-            )
-          })
-        }
+    <div className="container d-flex flex-column align-items-center">
+        <h4 style={{margin:"25px 0px 50px 0px"}}>{areaOfNeed} Lawyers</h4>
+        <div className="d-flex flex-column gap-4">
+          {
+            lawyerList?.map((lawyer, index) => {
+              return (
+                <>
+                  <div key={index} style={{ width: "600px", height: "250px" }} className="border d-flex rounded">
+                    <img className="rounded" width={"300px"} height={"250px"} src={`/${lawyer.photo}`} />
+                    <h3 className="m-auto">{lawyer.name}</h3>
+                    <button className="btn btn-primary" onClick={() => (navigate(`/profile?id=${lawyer.id}`, { state: { id: lawyer.id, name: lawyer.name, photo: lawyer.photo} }))}>PROFILE</button>
+                  </div>
+                </>
+              )
+            })
+          }
       </div>
 
-      <label style={{ top: "110px", left: "90%" }} className="position-absolute">Lawyers Type</label>
-      <ul style={{ top: "150px", left: "90%", width: "150px", height: "250px" }} className="ul-lawyer-types rounded list-unstyled border position-absolute">
+
+      <label style={{ top: "110px", left: "87%" }} className="position-absolute">Lawyers Type</label>
+      <ul style={{ top: "150px", left: "82%", width: "250px", height: "500px", overflowY: "auto", maxHeight: "500px" }} className="rounded list-unstyled border position-absolute">
         {
           lawyersType.map((lawyer, index) => {
-            return <li key={index} role="button" onClick={() => (changeLawyerType(lawyer))}><div style={{ height: "15px", width: "15px", backgroundColor: index === lawyersType.indexOf(areaOfNeed) && "#3E362E" }} className="border rounded-circle"></div>{lawyer}</li>
+            return (
+              <div className="d-flex gap-2">
+                <div style={{ height: "15px", width: "15px", backgroundColor: index === lawyersType.indexOf(areaOfNeed) && "#3E362E" }} className="border rounded-circle mt-1 ms-2"></div>
+                <li key={index} role="button" onClick={() => (changeLawyerType(lawyer))}>{lawyer}</li>
+              </div>
+            )
           })
         }
       </ul>
