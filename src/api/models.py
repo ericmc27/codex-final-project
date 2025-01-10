@@ -77,4 +77,30 @@ class Lawyers(User, db.Model):
             "address": self.address,
             "photo": self.photo,
         }
+
     
+
+
+class Cases(db.Model):
+    __tablename__ = 'cases'
+
+    id = db.Column(db.Integer, primary_key=True)
+    client_id = db.Column(db.Integer, db.ForeignKey('clients.id'), nullable=False)
+    lawyer_id = db.Column(db.Integer, db.ForeignKey('lawyers.id'), nullable=False)
+    case_number = db.Column(db.String(30), unique=True, nullable=False)
+    status = db.Column(db.String(20), nullable=False)
+
+    # Use lazy-loaded relationships
+    client = db.relationship("Clients", foreign_keys=[client_id])
+    lawyer = db.relationship("Lawyers", foreign_keys=[lawyer_id])
+
+    def serialize(self):
+        return {
+            "client_id": self.client_id,
+            "lawyer_id": self.lawyer_id,
+            "lawyer_name": self.lawyer.name if self.lawyer else None,
+            "email": self.client.email,  # Dynamically retrieve the email from the related Clients table
+            "lawyer_email": self.lawyer.email,
+            "case_number": self.case_number,
+            "status": self.status
+        }

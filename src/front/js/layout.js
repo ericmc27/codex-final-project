@@ -9,6 +9,7 @@ import Login from "./pages/Login.jsx";
 import Signup from "./pages/Signup.jsx";
 import Lawyer, {ProtectedLawyer, Profile} from "./pages/Lawyer.jsx";
 import Client, {ProtectedClient} from "./pages/Client.jsx"
+import CurrentClient from "./pages/CurrentClient.jsx";
 import { Navbar } from "./component/navbar";
 
 
@@ -28,6 +29,7 @@ const Layout = () => {
                     <Routes>
                         <Route element={<Signup/>} path="/signup" />
                         <Route element={<Login />} path="/login" />
+                        <Route element={<CurrentClient />} path="/current_client" />
                         <Route element={<ProtectedLawyer><Lawyer/></ProtectedLawyer>} path="/lawyer" />
                         <Route element={<ProtectedLawyer><Profile/></ProtectedLawyer>} path="/profile"/>
                         <Route element={<ProtectedClient><Client/></ProtectedClient>} path="/client" />
