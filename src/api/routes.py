@@ -2,8 +2,8 @@
 This module takes care of starting the API Server, Loading the DB and Adding the endpoints
 """
 from flask import Flask, request, jsonify, url_for, Blueprint
-from flask_jwt_extended import create_access_token, jwt_required, get_jwt
-from api.models import db, Clients, Lawyers
+from flask_jwt_extended import create_access_token, jwt_required, get_jwt_identity
+from api.models import db, Clients, Lawyers, Cases
 from api.utils import generate_sitemap, APIException
 from flask_cors import CORS
 
@@ -78,13 +78,13 @@ def login():
     if user_type == "Client":
         user_exists = Clients.query.filter_by(email=email).first()
         if user_exists:
-            token = create_access_token(identity=user_exists.name)
+            token = create_access_token(identity=user_exists.email)
             json_data = jsonify({"token":token, "need":user_exists.area_of_need, "userType":user_type})
     else:
         user_exists = Lawyers.query.filter_by(email=email).first()
         if user_exists:
             claims = {"id":user_exists.id}
-            token = create_access_token(identity=user_exists.name, additional_claims=claims)
+            token = create_access_token(identity=user_exists.email, additional_claims=claims)
             json_data = jsonify({"token":token, "specialty":user_exists.specialty, "photo":user_exists.photo})
 
     if not user_exists or not user_exists.check_password(password):
@@ -100,3 +100,20 @@ def check():
     token = request.headers.get("Authorization").split(' ')[1]
     return jsonify(token)
 
+@api.route('/client-cases', methods=['GET'])
+@jwt_required()
+def get_client_cases():
+    current_user_email = get_jwt_identity()  # Get the logged-in user's email from JWT
+    # Assume user identity is email; update if it's ID or another field
+    user = Clients.query.filter_by(email=current_user_email).first()
+
+    if not user:
+        return jsonify({"error": "Client not found"}), 404
+
+    # Fetch cases associated with the client
+    cases = Cases.query.filter_by(client_id=user.id).all()
+
+    # Serialize the case data
+    case_list = [case.serialize() for case in cases]
+
+    return jsonify({"logged_in_as": current_user_email, "cases": case_list}), 200
