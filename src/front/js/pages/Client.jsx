@@ -1,7 +1,7 @@
 import React from "react"
 import { BounceLoader } from "react-spinners"
 import { Context } from "../store/appContext"
-import { useNavigate } from "react-router-dom"
+import { useNavigate, Link } from "react-router-dom"
 
 
 export const ProtectedClient = ({ children }) => {
@@ -41,21 +41,22 @@ const Client = () => {
 
   return (
     <div className="container d-flex flex-column align-items-center">
-        <h4 style={{margin:"25px 0px 50px 0px"}}>{areaOfNeed} Lawyers</h4>
-        <div className="d-flex flex-column gap-4">
-          {
-            lawyerList?.map((lawyer, index) => {
-              return (
-                <>
-                  <div key={index} style={{ width: "600px", height: "250px" }} className="border d-flex rounded">
-                    <img className="rounded" width={"300px"} height={"250px"} src={`/${lawyer.photo}`} />
-                    <h3 className="m-auto">{lawyer.name}</h3>
-                    <button className="btn btn-primary" onClick={() => (navigate(`/profile?id=${lawyer.id}`, { state: { id: lawyer.id, name: lawyer.name, photo: lawyer.photo} }))}>PROFILE</button>
-                  </div>
-                </>
-              )
-            })
-          }
+      <Link to="../current_client">My case(s)</Link>
+      <h4 style={{margin:"25px 0px 50px 0px"}}>{areaOfNeed} Lawyers</h4>
+      <div className="d-flex flex-column gap-4">
+        {
+          lawyerList?.map((lawyer, index) => {
+            return (
+              <>
+                <div key={index} style={{ width: "600px", height: "250px" }} className="border d-flex rounded">
+                  <img className="rounded" width={"300px"} height={"250px"} src={`/${lawyer.photo}`} />
+                  <h3 className="m-auto">{lawyer.name}</h3>
+                  <button className="btn btn-primary" onClick={() => (navigate(`/profile?id=${lawyer.id}`, { state: { id: lawyer.id, name: lawyer.name, photo: lawyer.photo} }))}>PROFILE</button>
+                </div>
+              </>
+            )
+          })
+        }
       </div>
 
 
