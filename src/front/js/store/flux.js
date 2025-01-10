@@ -108,6 +108,7 @@ const getState = ({ getStore, getActions, setStore }) => {
 							} else {
 								localStorage.setItem("Specialty", data.specialty)
 								localStorage.setItem("Profile Picture", data.photo)
+								localStorage.setItem("Name", data.name)
 								window.location.href = "/lawyer"
 							}
 						}

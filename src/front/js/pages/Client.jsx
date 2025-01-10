@@ -1,4 +1,4 @@
-import React from "react"
+import React, { useEffect } from "react"
 import { BounceLoader } from "react-spinners"
 import { Context } from "../store/appContext"
 import { useNavigate } from "react-router-dom"
@@ -38,6 +38,10 @@ const Client = () => {
     await actions.displayLawyers(type)
     setLawyerList(JSON.parse(localStorage.getItem("lawyers")))
   }
+
+  useEffect(()=>{
+    fetch(`${process.env.BACKEND_URL}api/hello`)
+  }, [])
 
   return (
     <div className="container d-flex flex-column align-items-center">

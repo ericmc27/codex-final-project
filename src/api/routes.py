@@ -85,7 +85,7 @@ def login():
         if user_exists:
             claims = {"id":user_exists.id}
             token = create_access_token(identity=user_exists.name, additional_claims=claims)
-            json_data = jsonify({"token":token, "specialty":user_exists.specialty, "photo":user_exists.photo})
+            json_data = jsonify({"token":token, "specialty":user_exists.specialty, "photo":user_exists.photo, "name":user_exists.name})
 
     if not user_exists or not user_exists.check_password(password):
         return jsonify({"message":"login failed"}), 401
@@ -94,6 +94,12 @@ def login():
         return json_data, 200
     
   
+@api.route("/hello", methods=["GET"])
+@jwt_required()
+def say_hello():
+    print("hello")
+    return jsonify({"test":"hello"})
+
 @api.route("/verify", methods=["GET"])
 @jwt_required()
 def check():
