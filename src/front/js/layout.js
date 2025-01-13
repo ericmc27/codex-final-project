@@ -9,7 +9,6 @@ import Login from "./pages/Login.jsx";
 import Signup from "./pages/Signup.jsx";
 import Lawyer, {ProtectedLawyer, Profile} from "./pages/Lawyer.jsx";
 import Client, {ProtectedClient} from "./pages/Client.jsx"
-import LawyerDashboard from "./pages/LawyerDashboard.jsx";
 import { Navbar } from "./component/navbar";
 
 
@@ -32,7 +31,6 @@ const Layout = () => {
                         <Route element={<ProtectedLawyer><Lawyer/></ProtectedLawyer>} path="/lawyer" />
                         <Route element={<ProtectedLawyer><Profile/></ProtectedLawyer>} path="/profile"/>
                         <Route element={<ProtectedClient><Client/></ProtectedClient>} path="/client" />
-                        <Route element={<LawyerDashboard />} path="/lawyerdashboard" />
                         <Route element={<h1>Not found!</h1>} />
                     </Routes>
                 </ScrollToTop>

@@ -1,7 +1,8 @@
-import React, { useContext } from 'react'
+import React, { useContext, useState, useEffect } from 'react'
 import { useLocation, useNavigate, Link } from 'react-router-dom'
 import { BounceLoader } from "react-spinners"
 import { Context } from '../store/appContext'
+import '../../styles/lawyer.css';
 
 export const ProtectedLawyer = ({ children }) => {
   const { actions } = React.useContext(Context)
@@ -25,110 +26,102 @@ export const ProtectedLawyer = ({ children }) => {
   )
 };
 
-const clients = [
-  {
-    name: 'Eric',
-    status: 'Pending',
-    time: '10:00 AM',
-    type: 'Initial Consultation'
-  },
-  {
-    name: 'Rebekah',
-    status: 'Confirmed',
-    time: '1:00 PM',
-    type: 'Follow-up'
-  },
-  {
-    name: 'Jose',
-    status: 'In Progress',
-    time: '3:00 PM',
-    type: 'Document Review'
-  }
-];
+// const clients = [
+//   {
+//     name: 'Eric',
+//     status: 'Pending',
+//     time: '10:00 AM',
+//     type: 'Initial Consultation'
+//   },
+//   {
+//     name: 'Rebekah',
+//     status: 'Confirmed',
+//     time: '1:00 PM',
+//     type: 'Follow-up'
+//   },
+//   {
+//     name: 'Jose',
+//     status: 'In Progress',
+//     time: '3:00 PM',
+//     type: 'Document Review'
+//   }
+// ];
 
 const Lawyer = () => {
-  const navigate = useNavigate()
-  const links = [{ to: '/lawyer', text: 'Dashboard' }, { to: '/profile', text: 'Profile' }, { to: '/lawyer', text: 'Incoming' }]
+  const [cases, setCases] = useState([
+    { title: "Case 1: Contract Dispute", status: "Open", client: "John Doe" },
+    { title: "Case 2: Family Law", status: "Pending", client: "Jane Smith" },
+  ]);
+  const [stats, setStats] = useState({ openCases: 0, upcomingMeetings: 0, tasksDue: 0 });
+
+  useEffect(() => {
+    // Fetch stats from the API
+    fetch('/api/stats')
+      .then(response => response.json())
+      .then(data => setStats(data))
+      .catch(error => console.error('Error fetching stats:', error));
+
+    // Fetch cases from the API
+    fetch('/api/cases')
+      .then(response => response.json())
+      .then(data => setCases(prevCases => [...prevCases, ...data]))
+      .catch(error => console.error('Error fetching cases:', error));
+  }, []);
 
   return (
-    <>
-      <div className='w-50 m-auto text-center'>
-        {
-          links.map((link, index) => {
-            return <li className='list-unstyled h3' key={index}><Link className='text-decoration-none' to={link.to}>{link.text}</Link></li>
-          })
-        }
-      </div>
+    <div className="dashboard">
+      <header className="dashboard-header">
+        <h1>Lawyer Dashboard</h1>
+        <nav>
+          <ul>
+            <li><a href="#">Home</a></li>
+            <li><a href="#cases">Cases</a></li>
+            <li><a href="#calendar">Calendar</a></li>
+            <li><a href='/profile'>Profile</a></li>
+            <li><a href="#logout">Logout</a></li>
+          </ul>
+        </nav>
+      </header>
 
-      {/* <div className='m-auto' style={{border: "1px solid black", width: "750px"}}>
-        kksks
-      </div> */}
-
-      <div className="container py-4">
-        {/* Header Section */}
-        <div className="row mb-4">
-          <div className="col">
-            <h2 className="mb-3">Dashboard</h2>
-            <div className="d-flex gap-3">
-              <div className="card flex-grow-1">
-                <div className="card-body text-center">
-                  <h5 className="card-title">Today's Appointments</h5>
-                  <h3 className="mb-0">{clients.length}</h3>
-                </div>
-              </div>
-              <div className="card flex-grow-1">
-                <div className="card-body text-center">
-                  <h5 className="card-title">Incoming</h5>
-                  <h3 className="mb-0">0</h3>
-                </div>
-              </div>
-              <div className="card flex-grow-1">
-                <div className="card-body text-center">
-                  <h5 className="card-title">Active Cases</h5>
-                  <h3 className="mb-0">{clients.length}</h3>
-                </div>
-              </div>
+      <main>
+        <section className="overview">
+          <h2>Overview</h2>
+          <div className="stats">
+            <div className="stat-card">
+              <h3>Open Cases</h3>
+              <p>{stats.openCases}</p>
+            </div>
+            <div className="stat-card">
+              <h3>Upcoming Meetings</h3>
+              <p>{stats.upcomingMeetings}</p>
+            </div>
+            <div className="stat-card">
+              <h3>Tasks Due</h3>
+              <p>{stats.tasksDue}</p>
             </div>
           </div>
-        </div>
+        </section>
 
-        {/* Clients Section */}
-        <div className="row">
-          <div className="col">
-            <div className="card">
-              <div className="card-header bg-light">
-                <h4 className="mb-0">Incoming Appointments</h4>
-              </div>
-              <div className="card-body">
-                <div className="table-responsive">
-                  <table className="table table-hover">
-                    <thead>
-                      <tr>
-                        <th>Client Name</th>
-                        <th>Time</th>
-                        <th>Type</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {clients.map((client, index) => (
-                        <tr key={index}>
-                          <td>{client.name}</td>
-                          <td>{client.time}</td>
-                          <td>{client.type}</td>
-                        </tr>
-                      ))}
-                    </tbody>
-                  </table>
-                </div>
-              </div>
-            </div>
+        <section id="cases">
+          <h2>Cases</h2>
+          <ul className="list-unstyled">
+            {cases.map((c, index) => (
+              <li key={index} className="case-item">
+                <strong>{c.title}</strong> - Status: {c.status}, Client: {c.client}
+              </li>
+            ))}
+          </ul>
+        </section>
+
+        <section id="calendar">
+          <h2>Calendar</h2>
+          <div className="calendar-widget">
+            <p>Calendar functionality coming soon!</p>
           </div>
-        </div>
-      </div>
-
-    </>
-
-  )
+        </section>
+      </main>
+    </div>
+  );
 }
 
 export const Profile = () => {
