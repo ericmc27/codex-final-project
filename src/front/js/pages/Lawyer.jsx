@@ -75,8 +75,6 @@ const Lawyer = () => {
         <nav>
           <ul>
             <li><a href="#">Home</a></li>
-            <li><a href="#cases">Cases</a></li>
-            <li><a href="#calendar">Calendar</a></li>
             <li><a href='/profile'>Profile</a></li>
             <li><a href="#logout">Logout</a></li>
           </ul>
