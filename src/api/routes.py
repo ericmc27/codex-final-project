@@ -6,13 +6,15 @@ from flask_jwt_extended import create_access_token, jwt_required, get_jwt_identi
 from api.models import db, Clients, Lawyers, Cases
 from api.utils import generate_sitemap, APIException
 from flask_cors import CORS
-
-
+from twilio.jwt.access_token import AccessToken
+from twilio.jwt.access_token.grants import ChatGrant
+import os
 
 api = Blueprint('api', __name__)
 
 # Allow CORS requests to this API
 CORS(api)
+
 
 # POST a new CLIENT
 @api.route("/clients", methods=['POST'])
@@ -70,22 +72,36 @@ def display_lawyers():
     lawyers_data = [{"id":lawyer.id, "name":lawyer.name, "photo":lawyer.photo} for lawyer in lawyers]
     return jsonify(lawyers_data)
 
+def generate_token_chat(email):
+    account_sid = os.environ['TWILIO_ACCOUNT_SID']
+    api_key = os.environ['TWILIO_API_KEY']
+    api_secret = os.environ['TWILIO_API_KEY_SECRET']
+    token_chat = AccessToken(account_sid, api_key, api_secret, identity=email)
+    return token_chat
+
 @api.route("/login", methods=['POST'])
 def login():
     data = request.get_json()
     email, password, user_type = data.get("email").lower(), data.get("password"), data.get("user_type")
-  
+
     if user_type == "Client":
         user_exists = Clients.query.filter_by(email=email).first()
         if user_exists:
-            token = create_access_token(identity=user_exists.email)
-            json_data = jsonify({"token":token, "need":user_exists.area_of_need, "userType":user_type})
+            token_chat = generate_token_chat(email)
+            chat_grant = ChatGrant(service_sid="IS94e202b0d876453699a53eab5be3ccdf")
+            token_chat.add_grant(chat_grant)
+            claims = {"id":user_exists.id, "role":user_type}
+            token = create_access_token(identity=user_exists.email, additional_claims=claims)
+            json_data = jsonify({"token":token, "need":user_exists.area_of_need, "userType":user_type, "chatToken":token_chat.to_jwt()})
     else:
         user_exists = Lawyers.query.filter_by(email=email).first()
         if user_exists:
-            claims = {"id":user_exists.id}
+            token_chat = generate_token_chat(email)
+            chat_grant = ChatGrant(service_sid="IS94e202b0d876453699a53eab5be3ccdf")
+            token_chat.add_grant(chat_grant)
+            claims = {"id":user_exists.id, "role":user_type}
             token = create_access_token(identity=user_exists.email, additional_claims=claims)
-            json_data = jsonify({"token":token, "specialty":user_exists.specialty, "photo":user_exists.photo})
+            json_data = jsonify({"token":token, "name":user_exists.name, "specialty":user_exists.specialty, "photo":user_exists.photo, "chatToken":token_chat.to_jwt()})
 
     if not user_exists or not user_exists.check_password(password):
         return jsonify({"message":"login failed"}), 401
@@ -106,6 +122,8 @@ def check():
     token = request.headers.get("Authorization").split(' ')[1]
     return jsonify(token)
 
+
+
 @api.route('/client-cases', methods=['GET'])
 @jwt_required()
 def get_client_cases():
@@ -123,3 +141,4 @@ def get_client_cases():
     case_list = [case.serialize() for case in cases]
 
     return jsonify({"logged_in_as": current_user_email, "cases": case_list}), 200
+

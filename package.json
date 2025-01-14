@@ -73,14 +73,27 @@
 		]
 	},
 	"dependencies": {
+		"@sendgrid/mail": "^8.1.4",
+		"@twilio/conversations": "^2.6.0",
 		"assert": "^2.1.0",
+		"browserify-fs": "^1.0.0",
+		"browserify-zlib": "^0.2.0",
+		"crypto-browserify": "^3.12.1",
+		"express": "^4.21.2",
+		"fs": "^0.0.1-security",
 		"node-polyfill-webpack-plugin": "^4.1.0",
+		"path-browserify": "^1.0.1",
 		"prop-types": "^15.6.1",
+		"querystring-es3": "^0.2.1",
 		"react": "^16.8.4",
 		"react-dom": "^16.8.4",
 		"react-polyfills": "0.0.1",
 		"react-router-dom": "^6.3.0",
 		"react-spinners": "^0.15.0",
-		"request": "^2.79.0"
+		"request": "^2.79.0",
+		"socket.io-client": "^4.8.1",
+		"stream-browserify": "^3.0.0",
+		"stream-http": "^3.2.0",
+		"vm-browserify": "^1.1.2"
 	}
 }

@@ -1,4 +1,8 @@
-import { element } from "prop-types";
+import {Client} from "@twilio/conversations";
+
+export let client = new Client(`${localStorage.getItem("CHAT")}`);
+console.log(client)
+// const conversation = client.createConversation()
 
 const getState = ({ getStore, getActions, setStore }) => {
 	return {
@@ -24,7 +28,7 @@ const getState = ({ getStore, getActions, setStore }) => {
 				"Maritime",
 				"International",
 				"Elder",
-			]
+			],
 		},
 		actions: {
 			signup: async (e, { name, email, password, phone, address, areaOfNeed, specialty }, userType) => {
@@ -100,6 +104,7 @@ const getState = ({ getStore, getActions, setStore }) => {
 						if (response.status === 200) {
 							const data = await response.json();
 							localStorage.setItem("JWT", data.token)
+							localStorage.setItem("CHAT", data.chatToken)
 
 							if (data.userType === "Client") {
 								localStorage.setItem("Area of Need", data.need)
@@ -118,6 +123,12 @@ const getState = ({ getStore, getActions, setStore }) => {
 						}
 
 					})
+			},
+			forgotPassword: ()=>{
+				// await fetch(`${process.env.BACKEND_URL}/forgot-password`)
+			},
+			sendMessage: async(message)=>{
+			
 			},
 			getToken: () => {
 				return localStorage.getItem("JWT")

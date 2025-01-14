@@ -1,8 +1,10 @@
-import React, { useContext } from 'react'
+import React, { useContext, useState } from 'react'
 import { useLocation, useNavigate, Link } from 'react-router-dom'
 import { BounceLoader } from "react-spinners"
 import { Context } from '../store/appContext'
 import '../../styles/lawyer.css'
+import { client } from '../store/flux'
+
 
 export const ProtectedLawyer = ({ children }) => {
   const { actions } = React.useContext(Context)
@@ -57,11 +59,14 @@ export const Profile = () => {
   const lawyer = JSON.parse(localStorage.getItem("lawyers"))?.find(obj => String(obj.id) === lawyerId)
   const [name, setName] = React.useState(localStorage.getItem("Name"))
   const [specialty, setSpecialty] = React.useState(localStorage.getItem("Specialty"))
+  const [lawyerIsConnected, setLawyerIsConnected] = useState(false)
+
   const [photo, setPhoto] = React.useState(() => {
     const storedPhoto = localStorage.getItem("Profile Picture")
     return storedPhoto === "null" ? null : storedPhoto
   })
   const [display, setDisplay] = React.useState("casesSolved")
+ 
 
   const handlePhotoChange = async (e) => {
     const formData = new FormData()
@@ -69,12 +74,13 @@ export const Profile = () => {
     await actions.storeProfilePicture(formData)
   }
 
-  const handleKeyDown = (e)=>{
+  const handleKeyDown = async(e)=>{
     if(e.key === "Enter"){
-      console.log(e.target.value)
+      actions.sendMessage(e.target.value)
+      e.target.value = ""
     }
   }
-
+  
   return (
     <div className='d-flex'>
       <div style={{ backgroundColor: '#DCDCDC', height: "600px", width: "300px" }} className='d-flex flex-column align-items-center ms-5 mt-3 rounded'>
@@ -97,22 +103,25 @@ export const Profile = () => {
         display === "casesSolved" ?
           <div style={{ marginLeft: "200px" }} className='rounded mt-3 d-flex flex-column gap-3'>
             {
-              casesSolved.map((cases) => {
+              casesSolved.map((cases, index) => {
                 return (
-                  <div style={{ height: "500px", width: "500px" }} className='bg-warning rounded'>{cases.case}</div>
+                  <div key={index} style={{ height: "500px", width: "500px" }} className='bg-warning rounded'>{cases.case}</div>
                 )
               })
             }
           </div>
           : display === "submitCase" ?
-            <div style={{ height: "500px", width: "600px" }} className='m-auto border rounded'>
-              <textarea className='overflow-hidden' style={{ height: "350px", width: "500px" }}></textarea>
+            <div style={{ height: "500px", width: "545px"}} className='d-flex flex-column justify-content-center align-items-center m-auto rounded border'>
+              <input/>
+              <textarea className='overflow-hidden mt-5' style={{ height: "350px", width: "500px"}}></textarea>
+              <button type='button' className='btn btn-primary mt-3'>Send case</button>
             </div>
 
          :
       <div>
-        <div style={{height: "485px", width: "500px", margin: "60px 0px 0px 300px"}} className='flex border'>
-              <input type="text" onKeyDown={handleKeyDown} style={{width:"500px", outline: "none"}}/>
+        <div style={{height: "485px", width: "500px", margin: "60px 0px 0px 300px"}} className='d-flex flex-column border rounded'>
+              <div style={{height:"22px", width:"24px"}} className='rounded-circle border ms-auto me-4 mt-4'></div>
+              <input className='mt-auto' type="text" onKeyDown={handleKeyDown} style={{width:"500px"}}/>
         </div>
       </div>}
     </div>
