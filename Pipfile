@@ -26,6 +26,7 @@ flask-socketio = "*"
 pyjwt = "*"
 sendgrid = "*"
 twilio = "*"
+selenium = "*"
 
 [requires]
 python_version = "3.10"

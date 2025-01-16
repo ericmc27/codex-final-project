@@ -9,6 +9,7 @@ from flask_cors import CORS
 from twilio.jwt.access_token import AccessToken
 from twilio.jwt.access_token.grants import ChatGrant
 import os
+import uuid
 
 api = Blueprint('api', __name__)
 
@@ -72,12 +73,7 @@ def display_lawyers():
     lawyers_data = [{"id":lawyer.id, "name":lawyer.name, "photo":lawyer.photo} for lawyer in lawyers]
     return jsonify(lawyers_data)
 
-def generate_token_chat(email):
-    account_sid = os.environ['TWILIO_ACCOUNT_SID']
-    api_key = os.environ['TWILIO_API_KEY']
-    api_secret = os.environ['TWILIO_API_KEY_SECRET']
-    token_chat = AccessToken(account_sid, api_key, api_secret, identity=email)
-    return token_chat
+
 
 @api.route("/login", methods=['POST'])
 def login():
@@ -86,22 +82,18 @@ def login():
 
     if user_type == "Client":
         user_exists = Clients.query.filter_by(email=email).first()
+
         if user_exists:
-            token_chat = generate_token_chat(email)
-            chat_grant = ChatGrant(service_sid="IS94e202b0d876453699a53eab5be3ccdf")
-            token_chat.add_grant(chat_grant)
             claims = {"id":user_exists.id, "role":user_type}
             token = create_access_token(identity=user_exists.email, additional_claims=claims)
-            json_data = jsonify({"token":token, "need":user_exists.area_of_need, "userType":user_type, "chatToken":token_chat.to_jwt()})
+            json_data = jsonify({"token":token, "need":user_exists.area_of_need, "userType":user_type})
     else:
         user_exists = Lawyers.query.filter_by(email=email).first()
+        print(user_exists.cases)
         if user_exists:
-            token_chat = generate_token_chat(email)
-            chat_grant = ChatGrant(service_sid="IS94e202b0d876453699a53eab5be3ccdf")
-            token_chat.add_grant(chat_grant)
             claims = {"id":user_exists.id, "role":user_type}
             token = create_access_token(identity=user_exists.email, additional_claims=claims)
-            json_data = jsonify({"token":token, "name":user_exists.name, "specialty":user_exists.specialty, "photo":user_exists.photo, "chatToken":token_chat.to_jwt()})
+            json_data = jsonify({"token":token, "name":user_exists.name, "specialty":user_exists.specialty, "photo":user_exists.photo})
 
     if not user_exists or not user_exists.check_password(password):
         return jsonify({"message":"login failed"}), 401
@@ -110,20 +102,6 @@ def login():
         return json_data, 200
     
   
-@api.route("/hello", methods=["GET"])
-@jwt_required()
-def say_hello():
-    print("hello")
-    return jsonify({"test":"hello"})
-
-@api.route("/verify", methods=["GET"])
-@jwt_required()
-def check():
-    token = request.headers.get("Authorization").split(' ')[1]
-    return jsonify(token)
-
-
-
 @api.route('/client-cases', methods=['GET'])
 @jwt_required()
 def get_client_cases():
@@ -142,3 +120,42 @@ def get_client_cases():
 
     return jsonify({"logged_in_as": current_user_email, "cases": case_list}), 200
 
+@api.route("/submit-case", methods=["POST"])
+@jwt_required()
+def submit_Case():
+    title, body = request.json['title'], request.json['body']
+    client_email = get_jwt_identity()
+    lawyer_id = request.json['lawyerId']
+    lawyer = Lawyers.query.filter_by(id=lawyer_id).first()
+    client = Clients.query.filter_by(email=client_email).first()
+    new_case = Cases(client_id=client.id, lawyer_id=lawyer.id, title=title, body=body, case_number=str(uuid.uuid4()), status="INCOMING")
+    db.session.add(new_case)
+    db.session.commit()
+    return jsonify({"test":"message received"})
+
+def generate_token_chat(email):
+    account_sid = os.environ['TWILIO_ACCOUNT_SID']
+    api_key = os.environ['TWILIO_API_KEY']
+    api_secret = os.environ['TWILIO_API_KEY_SECRET']
+
+    token_chat = AccessToken(account_sid, api_key, api_secret, identity=email)
+    chat_grant = ChatGrant(service_sid="IS94e202b0d876453699a53eab5be3ccdf")
+    token_chat.add_grant(chat_grant)
+
+    return token_chat
+
+@api.route("/closed-cases", methods=['POST'])
+@jwt_required()
+def get_closed_cases():
+    body = request.get_json()
+    lawyer = Lawyers.query.filter_by(photo=body['photo']).first()
+    closed_cases = [case for case in lawyer.cases if case.status == "CLOSED"]
+    cases = [{'title':case.title, 'body':case.body} for case in closed_cases]
+    print(cases)
+    return jsonify(cases)
+
+@api.route("/verify", methods=["GET"])
+@jwt_required()
+def check():
+    token = request.headers.get("Authorization").split(' ')[1]
+    return jsonify(token)

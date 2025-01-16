@@ -3,7 +3,6 @@ import { useLocation, useNavigate, Link } from 'react-router-dom'
 import { BounceLoader } from "react-spinners"
 import { Context } from '../store/appContext'
 import '../../styles/lawyer.css'
-import { client } from '../store/flux'
 
 export const ProtectedLawyer = ({ children }) => {
   const { actions } = React.useContext(Context)
@@ -123,7 +122,7 @@ const Lawyer = () => {
   );
 }
 
-const casesSolved = [{ case: 'case 1' }, { case: 'case 2' }, { case: 'case 3' }, { case: 'case 1' }, { case: 'case 2' }, { case: 'case 3' }]
+// const casesSolved = [{ case: 'case 1' }, { case: 'case 2' }, { case: 'case 3' }, { case: 'case 1' }, { case: 'case 2' }, { case: 'case 3' }]
 
 export const Profile = () => {
   const { actions } = useContext(Context)
@@ -132,9 +131,9 @@ export const Profile = () => {
   const lawyerId = params.get('id')
   const lawyer = JSON.parse(localStorage.getItem("lawyers"))?.find(obj => String(obj.id) === lawyerId)
   const [name, setName] = React.useState(localStorage.getItem("Name"))
+  const [casesSolved, setCasesSolved] = React.useState([])
   const [specialty, setSpecialty] = React.useState(localStorage.getItem("Specialty"))
-  const [lawyerIsConnected, setLawyerIsConnected] = useState(false)
-
+  const [message, setMessage] = React.useState({title: "", body: ""})
   const [photo, setPhoto] = React.useState(() => {
     const storedPhoto = localStorage.getItem("Profile Picture")
     return storedPhoto === "null" ? null : storedPhoto
@@ -148,16 +147,34 @@ export const Profile = () => {
     await actions.storeProfilePicture(formData)
   }
 
-  const handleKeyDown = async(e)=>{
-    if(e.key === "Enter"){
-      actions.sendMessage(e.target.value)
-      e.target.value = ""
-    }
+  // const handleKeyDown = async(e)=>{
+  //   if(e.key === "Enter"){
+  //     actions.sendMessage(e.target.value)
+  //     e.target.value = ""
+  //   }
+  // }
+
+  const handleMessage = (e)=>{
+    const {id, value} = e.target
+    setMessage(prev=>({...prev, [id]:value}))
   }
+
+  const caseSubmitted = async ()=>{
+    await actions.submitCase(message, lawyer)
+  }
+
+  React.useEffect(()=>{
+    const casesSolved = async ()=>{
+      const data = await actions.closedCases(lawyerId)
+      setCasesSolved(data)
+    }
+
+    casesSolved()
+  }, [])
   
   return (
     <div className='d-flex'>
-      <div style={{ backgroundColor: '#DCDCDC', height: "600px", width: "300px" }} className='d-flex flex-column align-items-center ms-5 mt-3 rounded'>
+      <div style={{border: "1px solid #3E362E", height: "600px", width: "300px" }} className='d-flex flex-column align-items-center ms-5 mt-3 rounded'>
         <input onChange={handlePhotoChange} type='file' name='file' accept='image/*' className='d-none' id='profile-picture' />
         <label className='mt-4' style={{ cursor: "pointer" }} htmlFor='profile-picture'>
           <img className='border rounded-circle' style={{ height: "200px", width: "200px" }} src={state?.photo || lawyer?.photo || photo || `/profile-picture-placeholder.jpg`}></img>
@@ -179,16 +196,18 @@ export const Profile = () => {
             {
               casesSolved.map((cases, index) => {
                 return (
-                  <div key={index} style={{ height: "500px", width: "500px" }} className='bg-warning rounded'>{cases.case}</div>
+                  <div key={index} style={{ height: "500px", width: "500px" }} className='bg-warning rounded'>{cases.title}</div>
                 )
               })
             }
           </div>
           : display === "submitCase" ?
-            <div style={{ height: "500px", width: "545px"}} className='d-flex flex-column justify-content-center align-items-center m-auto rounded border'>
-              <input/>
-              <textarea className='overflow-hidden mt-5' style={{ height: "350px", width: "500px"}}></textarea>
-              <button type='button' className='btn btn-primary mt-3'>Send case</button>
+            <div style={{ height: "545px", width: "570px", backgroundColor: "#3E362E"}} className='d-flex flex-column justify-content-center align-items-center m-auto rounded border'>
+              <label htmlFor='title' className='text-white mb-3' style={{marginTop: "40px"}}>TITLE</label>
+              <input type='text' id='title' className="mb-4" value={message.title} onChange={handleMessage}/>
+              <label className='text-white mb-3'>CASE BRIEF DESCRIPTION</label>
+              <textarea id='body' className='overflow-hidden' style={{ height: "350px", width: "500px"}} value={message.body} onChange={handleMessage}></textarea>
+              <button type='button' className='btn btn-primary mt-3' style={{marginBottom: "25px"}} onClick={caseSubmitted}>Send case</button>
             </div>
 
          :

@@ -1,7 +1,7 @@
 import {Client} from "@twilio/conversations";
 
-export let client = new Client(`${localStorage.getItem("CHAT")}`);
-console.log(client)
+// export let client = new Client(`${localStorage.getItem("CHAT")}`);
+// console.log(client)
 // const conversation = client.createConversation()
 
 const getState = ({ getStore, getActions, setStore }) => {
@@ -128,7 +128,25 @@ const getState = ({ getStore, getActions, setStore }) => {
 				// await fetch(`${process.env.BACKEND_URL}/forgot-password`)
 			},
 			sendMessage: async(message)=>{
-			
+				
+			},
+			submitCase: async(message, lawyer)=>{
+				const body = {
+					...message,
+					lawyerId: lawyer.id
+				}
+
+				const response = await fetch(`${process.env.BACKEND_URL}/api/submit-case`,{
+					method: 'POST',
+					body: JSON.stringify(body),
+					headers: {
+						'Content-Type': 'application/json',
+						'Authorization': `Bearer ${localStorage.getItem("JWT")}`
+					}
+				})
+				
+				const data = await response.json()
+				console.log(data)
 			},
 			getToken: () => {
 				return localStorage.getItem("JWT")
@@ -162,6 +180,28 @@ const getState = ({ getStore, getActions, setStore }) => {
 				const result = await fetch(`${process.env.BACKEND_URL}/api/display`, options)
 				const data = await result.json()
 				localStorage.setItem("lawyers", JSON.stringify(data))
+			},
+			closedCases: async(lawyerId)=>{
+				let photo = localStorage.getItem('lawyers')
+				photo = JSON.parse(photo).find(obj=>obj.id===parseInt(lawyerId))?.photo
+				const body = {photo: photo ? photo : getActions().getProfilePicture()}
+				
+				const response = await fetch(`${process.env.BACKEND_URL}/api/closed-cases`,
+					{
+						method: 'POST',
+						body: JSON.stringify(body),
+						headers: {
+							'Content-Type': 'application/json',
+							'Authorization': `Bearer ${localStorage.getItem("JWT")}`
+						}
+					}
+
+				)
+				const data = await response.json()
+				return data
+			},
+			getProfilePicture: ()=>{
+				return localStorage.getItem("Profile Picture")
 			},
 			verifyJwt: async () => {
 				let token = getActions().getToken()

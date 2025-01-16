@@ -39,10 +39,6 @@ const Client = () => {
     setLawyerList(JSON.parse(localStorage.getItem("lawyers")))
   }
 
-  useEffect(()=>{
-    fetch(`${process.env.BACKEND_URL}api/hello`)
-  }, [])
-
   return (
     <div className="container d-flex flex-column align-items-center">
       <Link to="../current_client">My case(s)</Link>
@@ -69,9 +65,9 @@ const Client = () => {
         {
           lawyersType.map((lawyer, index) => {
             return (
-              <div className="d-flex gap-2">
+              <div className="d-flex gap-2" key={index}>
                 <div style={{ height: "15px", width: "15px", backgroundColor: index === lawyersType.indexOf(areaOfNeed) && "#3E362E" }} className="border rounded-circle mt-1 ms-2"></div>
-                <li key={index} role="button" onClick={() => (changeLawyerType(lawyer))}>{lawyer}</li>
+                <li role="button" onClick={() => (changeLawyerType(lawyer))}>{lawyer}</li>
               </div>
             )
           })
