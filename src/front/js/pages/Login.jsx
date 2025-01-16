@@ -41,6 +41,9 @@ const Login = () => {
           Login
         </button>
         <label className="m-auto">Don't have an account? <Link className="text-decoration-none" to={"/signup"} state={{ userType: "Client" }}>Sign up</Link></label>
+
+         {/* Forgot Password */}
+
         <label className="m-auto">Forgot your password? <a  href="#"onClick={(e) => {e.preventDefault();setIsModalOpen(true);}} className="forgot-password-link">Click Here!</a> </label>
         {isModalOpen && (
           <ForgotPasswordModal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)}/>
@@ -62,6 +65,9 @@ const Login = () => {
           Login
         </button>
         <label className="m-auto">Don't have an account? <Link className="text-decoration-none" to={"/signup"} state={{ userType: "Lawyer" }}>Sign up</Link></label>
+
+        {/* Forgot Password */}
+        
         <label className="m-auto">Forgot your password? <a  href="#"onClick={(e) => {e.preventDefault();setIsModalOpen(true);}} className="forgot-password-link">Click Here!</a> </label>
         {isModalOpen && (
           <ForgotPasswordModal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)}/>

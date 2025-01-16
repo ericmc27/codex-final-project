@@ -5,11 +5,13 @@ export const ForgotPasswordModal = ({ isOpen, onClose }) => {
         e.preventDefault();
         const email = e.target.email.value;
         console.log("Password reset email sent to:", email);
-        // Add your password reset logic here
-        onClose(); // Close the modal
+
+        // Sendgrip here  
+
+        onClose(); 
     };
 
-    if (!isOpen) return null; // Don't render if modal is closed
+    if (!isOpen) return null; 
 
     return (
         <div className="modal-overlay">
