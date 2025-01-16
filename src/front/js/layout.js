@@ -7,6 +7,7 @@ import { BackendURL } from "./component/backendURL";
 import injectContext from "./store/appContext";
 import Login from "./pages/Login.jsx";
 import Signup from "./pages/Signup.jsx";
+import Home from "./pages/Home.jsx";
 import Lawyer, { ProtectedLawyer, Profile } from "./pages/Lawyer.jsx";
 import Client, { ProtectedClient } from "./pages/Client.jsx"
 import CurrentClient from "./pages/CurrentClient.jsx";
@@ -27,6 +28,7 @@ const Layout = () => {
                 <ScrollToTop>
                     <Navbar />
                     <Routes>
+                        <Route element={<Home/>} path="/" />
                         <Route element={<Signup />} path="/signup" />
                         <Route element={<Login />} path="/login" />
                         <Route element={<CurrentClient />} path="/current_client" />

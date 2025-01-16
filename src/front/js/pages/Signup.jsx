@@ -62,12 +62,14 @@ const Signup = () => {
            <CommonFields userData={userData} handleChange={handleChange} />
            <AreaOfNeed userData={userData} handleChange={handleChange} />
            <button className="btn btn-primary mt-2" type="submit">Signup</button>
+
         </form>
         :
         <form onSubmit={(e) => (actions.signup(e, userData, userType))} className="m-auto border border-1 rounded d-flex flex-column align-items-center" style={{ width: "400px"}}>
           <CommonFields userData={userData} handleChange={handleChange} />
           <LawyerFields userData={userData} handleChange={handleChange} />
           <button className="btn btn-primary mt-2" type="submit">Signup</button>
+          
         </form>
 
       }
