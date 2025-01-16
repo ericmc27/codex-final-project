@@ -2,6 +2,7 @@
 This module takes care of starting the API Server, Loading the DB and Adding the endpoints
 """
 import os
+import smtplib
 import uuid
 from flask import Flask, request, jsonify, url_for, send_from_directory, render_template
 from PIL import Image
@@ -15,6 +16,8 @@ from api.admin import setup_admin
 from api.commands import setup_commands
 from flask_jwt_extended import JWTManager, jwt_required, get_jwt
 import datetime
+from sendgrid import SendGridAPIClient
+from sendgrid.helpers.mail import Mail
 
 # from models import Person
 
@@ -26,10 +29,11 @@ static_file_dir = os.path.join(os.path.dirname(
 app = Flask(__name__)
 app.url_map.strict_slashes = False
 CORS(app)
+
 app.config["JWT_SECRET_KEY"] = "superman"
 app.config["UPLOAD_FOLDER"] = "public/"
 app.config["JWT_ACCESS_TOKEN_EXPIRES"] = datetime.timedelta(minutes=20)
-jwt = JWTManager(app)
+jwt_setup = JWTManager(app)
 
 # database condiguration
 db_url = os.getenv("DATABASE_URL")
@@ -97,7 +101,27 @@ def store_picture():
 
     return jsonify({"photo": filename}), 200
 
+@app.route("/forgot-password")
+def forgot_password():
+    key = os.getenv("SENDGRID_API_KEY")
+    
+    # message = Mail(
+    # from_email='em2864@ecastillo.tech',
+    # to_emails='ecastillocalderon@mercy.edu',
+    # subject='Recovery password',
+    # html_content='<strong>Your recovery password is: 12345</strong>')
+ 
+    # try:
+    #     sg = SendGridAPIClient(os.environ.get('SENDGRID_API_KEY'))
+    #     response = sg.send(message)
+    #     print(response.status_code)
+    # except Exception as e:
+    #     print("hello")
+    #     print(e)
+    
+    return jsonify(key)
+
 # this only runs if `$ python src/main.py` is executed
 if __name__ == '__main__':
     PORT = int(os.environ.get('PORT', 3001))
-    app.run(host='0.0.0.0', port=PORT, debug=True)
+    app.run(app, host='0.0.0.0', port=PORT, debug=True)

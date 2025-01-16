@@ -1,4 +1,4 @@
-import React from "react"
+import React, { useEffect } from "react"
 import { BounceLoader } from "react-spinners"
 import { Context } from "../store/appContext"
 import { useNavigate, Link } from "react-router-dom"
@@ -65,9 +65,9 @@ const Client = () => {
         {
           lawyersType.map((lawyer, index) => {
             return (
-              <div className="d-flex gap-2">
+              <div className="d-flex gap-2" key={index}>
                 <div style={{ height: "15px", width: "15px", backgroundColor: index === lawyersType.indexOf(areaOfNeed) && "#3E362E" }} className="border rounded-circle mt-1 ms-2"></div>
-                <li key={index} role="button" onClick={() => (changeLawyerType(lawyer))}>{lawyer}</li>
+                <li role="button" onClick={() => (changeLawyerType(lawyer))}>{lawyer}</li>
               </div>
             )
           })

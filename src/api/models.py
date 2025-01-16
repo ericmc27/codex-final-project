@@ -1,6 +1,6 @@
 from flask_sqlalchemy import SQLAlchemy
 import bcrypt
-from sqlalchemy import JSON
+from sqlalchemy import JSON, CheckConstraint
 db = SQLAlchemy()
 
 class User:
@@ -58,6 +58,8 @@ class Lawyers(User, db.Model):
     address = db.Column(db.String, unique=False, nullable=False)
     photo = db.Column(db.String,  unique=True, nullable=True)
     specialty = db.Column (db.String, unique=False, nullable=False)
+
+    cases = db.relationship("Cases", back_populates="lawyer")
    
     def __init__(self, name, email, password, phone, address, photo, specialty):
         self.name = name
@@ -87,12 +89,23 @@ class Cases(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     client_id = db.Column(db.Integer, db.ForeignKey('clients.id'), nullable=False)
     lawyer_id = db.Column(db.Integer, db.ForeignKey('lawyers.id'), nullable=False)
-    case_number = db.Column(db.String(30), unique=True, nullable=False)
+    title = db.Column(db.String, unique=False, nullable=False)
+    body = db.Column(db.String, unique=False, nullable=False)
+    case_number = db.Column(db.String(255), unique=True, nullable=False)
     status = db.Column(db.String(20), nullable=False)
 
-    # Use lazy-loaded relationships
-    client = db.relationship("Clients", foreign_keys=[client_id])
-    lawyer = db.relationship("Lawyers", foreign_keys=[lawyer_id])
+        
+    __table_args__ = (
+
+        CheckConstraint(
+            status.in_(['OPEN', 'CLOSED', 'INCOMING']),
+            name='status_constraint'
+        ),
+    )
+
+    client = db.relationship("Clients", lazy="joined")
+    lawyer = db.relationship("Lawyers", back_populates="cases", lazy="joined")
+
 
     def serialize(self):
         return {
