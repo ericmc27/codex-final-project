@@ -1,5 +1,6 @@
 import {Client} from "@twilio/conversations";
 
+
 // export let client = new Client(`${localStorage.getItem("CHAT")}`);
 // console.log(client)
 // const conversation = client.createConversation()
@@ -31,7 +32,7 @@ const getState = ({ getStore, getActions, setStore }) => {
 			],
 		},
 		actions: {
-			signup: async (e, { name, email, password, phone, address, areaOfNeed, specialty }, userType) => {
+			signup: async (e, { name, email, password, phone, address, areaOfNeed, specialty }, userType, navigate) => {
 				e.preventDefault();
 				let newContact;
 
@@ -75,7 +76,9 @@ const getState = ({ getStore, getActions, setStore }) => {
 						if (data.message === "Account exists") {
 							alert("Oops! An account already exists with that email. ")
 						} else {
-							alert("User added")
+							alert("User added successfully!");
+							console.log("Redirecting to login...");
+							navigate('/login');
 						}
 
 					})

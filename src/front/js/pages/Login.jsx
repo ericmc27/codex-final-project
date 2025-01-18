@@ -53,7 +53,7 @@ const Login = () => {
 
       <form
         onSubmit={(e) => (actions.login(e, lawyerData, "Lawyer"))}
-        style={{ height: "440px", width: "440px", margin: "80px auto 0px auto" }}
+        style={{ height: "440px", width: "440px", margin: "80px auto 0px auto", backgroundColor: "#3E362E", color: "white"  }}
         className="border border-2 d-flex flex-column rounded">
 
         <LoginInputs lawyerData={lawyerData} handleChange={handleChange} userType={"Lawyer"} />
