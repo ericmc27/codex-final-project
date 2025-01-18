@@ -36,7 +36,7 @@ const Login = () => {
         <button
           type='btn'
           style={{ width: "350px", margin: "30px auto 0px auto" }}
-          className='btn btn-primary border'
+          className='btn btn-dark border'
         >
           Login
         </button>
@@ -44,7 +44,7 @@ const Login = () => {
 
          {/* Forgot Password */}
 
-        <label className="m-auto">Forgot your password? <a  href="#"onClick={(e) => {e.preventDefault();setIsModalOpen(true);}} className="forgot-password-link">Click Here!</a> </label>
+        <label className="m-auto">Forgot your password? <a  href="#"onClick={(e) => {e.preventDefault();setIsModalOpen(true);}} className="forgot-password-link text-decoration-none">Click Here</a> </label>
         {isModalOpen && (
           <ForgotPasswordModal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)}/>
         )}
@@ -53,22 +53,22 @@ const Login = () => {
 
       <form
         onSubmit={(e) => (actions.login(e, lawyerData, "Lawyer"))}
-        style={{ height: "440px", width: "440px", margin: "80px auto 0px auto", backgroundColor: "#3E362E", color: "white"  }}
+        style={{ height: "440px", width: "440px", margin: "80px auto 0px auto", backgroundColor:"#3E362E", color:"#e8e7df"}}
         className="border border-2 d-flex flex-column rounded">
 
         <LoginInputs lawyerData={lawyerData} handleChange={handleChange} userType={"Lawyer"} />
         <button
           type='btn'
-          style={{ width: "350px", margin: "30px auto 0px auto" }}
+          style={{ width: "350px", margin: "30px auto 0px auto", backgroundColor: "#e8e7df", color:"#FF8C00"}}
           className='btn btn-primary border'
         >
           Login
         </button>
-        <label className="m-auto">Don't have an account? <Link className="text-decoration-none" to={"/signup"} state={{ userType: "Lawyer" }}>Sign up</Link></label>
+        <label className="m-auto">Don't have an account? <Link style={{color:"#FF8C00"}} className="text-decoration-none" to={"/signup"} state={{ userType: "Lawyer" }}>Sign up</Link></label>
 
         {/* Forgot Password */}
         
-        <label className="m-auto">Forgot your password? <a  href="#"onClick={(e) => {e.preventDefault();setIsModalOpen(true);}} className="forgot-password-link">Click Here!</a> </label>
+        <label className="m-auto">Forgot your password? <a style={{color:"#FF8C00"}}  href="#"onClick={(e) => {e.preventDefault();setIsModalOpen(true);}} className="forgot-password-link text-decoration-none">Click Here</a> </label>
         {isModalOpen && (
           <ForgotPasswordModal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)}/>
         )}

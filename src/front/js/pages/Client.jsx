@@ -48,10 +48,10 @@ const Client = () => {
           lawyerList?.map((lawyer, index) => {
             return (
               <>
-                <div key={index} style={{ width: "600px", height: "250px" }} className="border d-flex rounded">
-                  <img className="rounded" width={"300px"} height={"250px"} src={`/${lawyer.photo}`} />
+                <div key={index} style={{ width: "600px", height: "250px" }} className="border border-dark d-flex rounded">
+                  <img className="rounded" width={"240px"} height={"250px"} src={`/${lawyer.photo}`} />
                   <h3 className="m-auto">{lawyer.name}</h3>
-                  <button className="btn btn-primary" onClick={() => (navigate(`/profile?id=${lawyer.id}`, { state: { id: lawyer.id, name: lawyer.name, photo: lawyer.photo} }))}>PROFILE</button>
+                  <button className="btn btn-dark" onClick={() => (navigate(`/profile?id=${lawyer.id}`, { state: { id: lawyer.id, name: lawyer.name, photo: lawyer.photo} }))}>SEE MY PROFILE</button>
                 </div>
               </>
             )
@@ -61,12 +61,12 @@ const Client = () => {
 
 
       <label style={{ top: "110px", left: "87%" }} className="position-absolute">Lawyers Type</label>
-      <ul style={{ top: "150px", left: "82%", width: "250px", height: "500px", overflowY: "auto", maxHeight: "500px" }} className="rounded list-unstyled border position-absolute">
+      <ul style={{ top: "150px", left: "82%", width: "250px", height: "500px", overflowY: "auto", maxHeight: "500px", border: "1px solid #3E362E" }} className="rounded list-unstyled position-absolute">
         {
           lawyersType.map((lawyer, index) => {
             return (
               <div className="d-flex gap-2" key={index}>
-                <div style={{ height: "15px", width: "15px", backgroundColor: index === lawyersType.indexOf(areaOfNeed) && "#3E362E" }} className="border rounded-circle mt-1 ms-2"></div>
+                <div style={{ height: "15px", width: "15px", border: "1px solid #3E362E", backgroundColor: index === lawyersType.indexOf(areaOfNeed) && "#FF8C00" }} className="rounded-circle mt-1 ms-2"></div>
                 <li role="button" onClick={() => (changeLawyerType(lawyer))}>{lawyer}</li>
               </div>
             )

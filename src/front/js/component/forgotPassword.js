@@ -16,7 +16,7 @@ export const ForgotPasswordModal = ({ isOpen, onClose }) => {
     return (
         <div className="modal-overlay">
             <div className="modal-container">
-                <div className="modal-content">
+                <div className="modal-content p-5">
                     <h2>Forgot your password?</h2>
                     <p>We’ll email you a link to reset your password.</p>
                     <form onSubmit={handleSubmit}>

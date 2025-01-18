@@ -26,50 +26,24 @@ export const ProtectedLawyer = ({ children }) => {
   )
 };
 
-// const clients = [
-//   {
-//     name: 'Eric',
-//     status: 'Pending',
-//     time: '10:00 AM',
-//     type: 'Initial Consultation'
-//   },
-//   {
-//     name: 'Rebekah',
-//     status: 'Confirmed',
-//     time: '1:00 PM',
-//     type: 'Follow-up'
-//   },
-//   {
-//     name: 'Jose',
-//     status: 'In Progress',
-//     time: '3:00 PM',
-//     type: 'Document Review'
-//   }
-// ];
 
 const Lawyer = () => {
-  const [cases, setCases] = useState([
-    { title: "Case 1: Contract Dispute", status: "Open", client: "John Doe" },
-    { title: "Case 2: Family Law", status: "Pending", client: "Jane Smith" },
-  ]);
-  const [stats, setStats] = useState({ openCases: 0, upcomingMeetings: 0, tasksDue: 0 });
+  const [cases, setCases] = useState([])
+  const {actions} = useContext(Context)
+  const [stats, setStats] = useState({ openCases: 0, incomingCases: 0, tasksDue: 0 });
 
-  useEffect(() => {
-    // Fetch stats from the API
-    fetch('/api/stats')
-      .then(response => response.json())
-      .then(data => setStats(data))
-      .catch(error => console.error('Error fetching stats:', error));
-
-    // Fetch cases from the API
-    fetch('/api/cases')
-      .then(response => response.json())
-      .then(data => setCases(prevCases => [...prevCases, ...data]))
-      .catch(error => console.error('Error fetching cases:', error));
-  }, []);
+  console.log("casesss", cases)
+  useEffect(()=>{
+    const fetchIncomingCases = async ()=>{
+      const data = await actions.getIncomingCases()
+      stats.incomingCases = data.length
+      setCases(data)
+    }
+    fetchIncomingCases()
+  }, [])
 
   return (
-    <div className="dashboard">
+    <div style={{width:"950px"}} className="dashboard m-auto">
       <header className="dashboard-header">
         <h1>Lawyer Dashboard</h1>
         <nav>
@@ -90,8 +64,8 @@ const Lawyer = () => {
               <p>{stats.openCases}</p>
             </div>
             <div className="stat-card">
-              <h3>Upcoming Meetings</h3>
-              <p>{stats.upcomingMeetings}</p>
+              <h3>Incoming Cases</h3>
+              <p>{stats.incomingCases}</p>
             </div>
             <div className="stat-card">
               <h3>Tasks Due</h3>
@@ -103,11 +77,24 @@ const Lawyer = () => {
         <section id="cases">
           <h2>Cases</h2>
           <ul className="list-unstyled">
-            {cases.map((c, index) => (
-              <li key={index} className="case-item">
-                <strong>{c.title}</strong> - Status: {c.status}, Client: {c.client}
-              </li>
-            ))}
+              {
+                cases.map((caseObj)=>{
+                  return( 
+                  <li className='case-item'>
+                    <div className='d-flex justify-content-between'>
+                      <div><span className='fw-bold'>Title: </span>{caseObj.title}</div>
+                      <div><span className='fw-bold'>Case Number: </span>{caseObj.case_number}</div>
+                    </div>
+                    <div><span className='fw-bold'>Client Name: </span>{caseObj.client.name}</div>
+                    <div style={{height: "150px", backgroundColor:"whitesmoke"}} className='border border-1'>{caseObj.body}</div>
+                    <div className='d-flex justify-content-end mt-3 gap-3'>
+                      <button className='btn btn-success'>Accept</button>
+                      <button className='btn btn-danger'>Decline</button>
+                    </div>
+                  </li>
+                  )
+                })
+              }
           </ul>
         </section>
 
@@ -122,7 +109,6 @@ const Lawyer = () => {
   );
 }
 
-// const casesSolved = [{ case: 'case 1' }, { case: 'case 2' }, { case: 'case 3' }, { case: 'case 1' }, { case: 'case 2' }, { case: 'case 3' }]
 
 export const Profile = () => {
   const { actions } = useContext(Context)
@@ -160,7 +146,12 @@ export const Profile = () => {
   }
 
   const caseSubmitted = async ()=>{
+    const title = document.getElementById("title")
+    const body = document.getElementById("body")
+
     await actions.submitCase(message, lawyer)
+    title.value = ""
+    body.value = ""
   }
 
   React.useEffect(()=>{
@@ -183,10 +174,10 @@ export const Profile = () => {
         <h2 className='text-capitalize'>{name}</h2>
         <h4>{specialty} Lawyer</h4>
 
-        <div style={{ height: "200px", width: "200px" }} className='bg-primary mt-5 rounded'>
+        <div style={{ height: "200px", width: "200px", backgroundColor: "#FF8C00", color:"#3E362E"}} className='fw-bold mt-5 rounded'>
           <label className='label-case mt-2 ms-3' onClick={() => (setDisplay("casesSolved"))}><img width={"40px"} src='/cases-solved.png' /> CASES SOLVED</label>
           <label className='label-case mt-3 ms-3' onClick={() => (setDisplay("submitCase"))}><img width={"45px"} src='/legal-document.png' />SUBMIT A CASE</label>
-          <label className='label-case mt-3 ms-3' onClick={() => (setDisplay("contactMe"))}><img width={"45px"} src='/contact-me.png' /> CONTACT ME</label>
+          {/* <label className='label-case mt-3 ms-3' onClick={() => (setDisplay("contactMe"))}><img width={"45px"} src='/contact-me.png' /> CONTACT ME</label> */}
         </div>
       </div>
 
