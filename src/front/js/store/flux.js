@@ -127,9 +127,6 @@ const getState = ({ getStore, getActions, setStore }) => {
 			forgotPassword: ()=>{
 				// await fetch(`${process.env.BACKEND_URL}/forgot-password`)
 			},
-			sendMessage: async(message)=>{
-				
-			},
 			submitCase: async(message, lawyer)=>{
 				const body = {
 					...message,
@@ -147,6 +144,18 @@ const getState = ({ getStore, getActions, setStore }) => {
 				
 				const data = await response.json()
 				console.log(data)
+			},
+			getIncomingCases: async()=>{
+				const body = {photo: localStorage.getItem("Profile Picture")}
+				
+				const result = await fetch(`${process.env.BACKEND_URL}/api/incoming-cases`,{
+						headers: {
+							'Authorization': `Bearer ${localStorage.getItem("JWT")}`
+						}
+					}
+				)
+				const data = await result.json()
+				return data
 			},
 			getToken: () => {
 				return localStorage.getItem("JWT")

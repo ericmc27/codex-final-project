@@ -101,10 +101,10 @@ export const AreaOfNeed = ({ userData, handleChange }) => {
 export const LawyerFields = ({ userData, handleChange }) => {
   return (
     <>
-      <label htmlFor="specialty">Select up to 5 areas where you specialize (hold Ctrl to select multiple): </label>
+      <label className="mt-3 mb-1" htmlFor="specialty">Specialization</label>
 
       <select name="specialty" id="specialty" value={userData.specialty} onChange={handleChange} required>
-      <option value="" disabled>-- Select an area of need --</option>
+      <option value="" disabled>-- Select specialization --</option>
         <option value="Corporate and Business">Corporate and Business Law</option>
         <option value="Criminal">Criminal Law</option>
         <option value="Family">Family Law</option>
@@ -126,7 +126,6 @@ export const LawyerFields = ({ userData, handleChange }) => {
         <option value="International">International Law</option>
         <option value="Elder">Elder Law</option>
       </select>
-      <br></br>
 
       {/* <label className="form-label" htmlFor="barNumber">Bar ID Number</label>
       <input
