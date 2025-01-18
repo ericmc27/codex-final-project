@@ -3,7 +3,8 @@ import { CommonFields } from "../component/signup";
 import { AreaOfNeed } from "../component/signup";
 import { LawyerFields } from "../component/signup";
 import { Context } from "../store/appContext"
-import { useLocation } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
+
 
 const Signup = () => {
   const location = useLocation()
@@ -11,7 +12,7 @@ const Signup = () => {
   const [userData, setUserData] = React.useState({name: '', email: '', password: '', phone: '', address: '', areaOfNeed: '', specialty: ''})
   // const [lawyerFields, setLawyerFields] = React.useState({ photo: '', specialty: '', barNumber: '', lawFirm: '', credentials: '' })
   const { actions } = React.useContext(Context)
-
+  const navigate = useNavigate()
   console.log(userData)
   const handleChange = (e) => {
     let { name, value } = e.target
@@ -65,12 +66,13 @@ const Signup = () => {
 
         </form>
         :
-        <form onSubmit={(e) => (actions.signup(e, userData, userType))} className="m-auto border border-1 rounded d-flex flex-column align-items-center" style={{ width: "400px", height: "520px", backgroundColor: "#3E362E", color:"#e8e7df"}}>
+        <form onSubmit={(e) => (actions.signup(e, userData, userType, navigate))} className="m-auto border border-1 rounded d-flex flex-column align-items-center" style={{ width: "400px", height: "520px", backgroundColor: "#3E362E", color:"#e8e7df"}}>
           <CommonFields userData={userData} handleChange={handleChange} />
           <LawyerFields userData={userData} handleChange={handleChange} />
           <button style={{backgroundColor: "#e8e7df", color: "#FF8C00"}} className="btn btn-primary mt-3" type="submit">Signup</button>
           
         </form>
+
 
       }
 
