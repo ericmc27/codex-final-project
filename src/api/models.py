@@ -35,7 +35,7 @@ class Clients(User, db.Model):
         self.address = address
         self.area_of_need = area_of_need
 
-    def repr(self):
+    def serialize(self):
         return {
             "id": self.id,
             "name": self.name,
@@ -70,7 +70,7 @@ class Lawyers(User, db.Model):
         self.photo = photo
         self.specialty = specialty
 
-    def repr(self):
+    def serialize(self):
         return {
             "id": self.id,
             "name": self.name,
@@ -109,11 +109,8 @@ class Cases(db.Model):
 
     def serialize(self):
         return {
-            "client_id": self.client_id,
-            "lawyer_id": self.lawyer_id,
-            "lawyer_name": self.lawyer.name if self.lawyer else None,
-            "email": self.client.email,  # Dynamically retrieve the email from the related Clients table
-            "lawyer_email": self.lawyer.email,
-            "case_number": self.case_number,
-            "status": self.status
+           'client':self.client.serialize(),
+           'title':self.title,
+           'body':self.body,
+           'case_number':self.case_number
         }
