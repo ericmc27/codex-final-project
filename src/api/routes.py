@@ -11,6 +11,7 @@ from twilio.jwt.access_token.grants import ChatGrant
 import os
 import uuid
 
+
 api = Blueprint('api', __name__)
 
 # Allow CORS requests to this API
@@ -78,27 +79,32 @@ def display_lawyers():
 @api.route("/login", methods=['POST'])
 def login():
     data = request.get_json()
-    email, password, user_type = data.get("email").lower(), data.get("password"), data.get("user_type")
+    email, password, user_type, socket_id = data.get("email").lower(), data.get("password"), data.get("user_type"), data.get("socket_id")
 
     if user_type == "Client":
         user_exists = Clients.query.filter_by(email=email).first()
 
         if user_exists:
+            print(socket_id)
+            user_exists.current_session = socket_id
+            db.session.commit()
             claims = {"id":user_exists.id, "role":user_type}
             token = create_access_token(identity=user_exists.email, additional_claims=claims)
             json_data = jsonify({"token":token, "need":user_exists.area_of_need, "userType":user_type})
     else:
         user_exists = Lawyers.query.filter_by(email=email).first()
-        print(user_exists.cases)
+
         if user_exists:
+            user_exists.current_session = socket_id
+            db.session.commit()
             claims = {"id":user_exists.id, "role":user_type}
             token = create_access_token(identity=user_exists.email, additional_claims=claims)
             json_data = jsonify({"token":token, "name":user_exists.name, "specialty":user_exists.specialty, "photo":user_exists.photo})
 
+
     if not user_exists or not user_exists.check_password(password):
         return jsonify({"message":"login failed"}), 401
     else:
-        
         return json_data, 200
     
   
@@ -116,7 +122,7 @@ def get_client_cases():
     cases = Cases.query.filter_by(client_id=user.id).all()
 
     # Serialize the case data
-    case_list = [case.serialize() for case in cases]
+    case_list = [case.serialize() for case in cases if case.status == "OPEN"]
 
     return jsonify({"logged_in_as": current_user_email, "cases": case_list}), 200
 
@@ -135,7 +141,7 @@ def get_client_cases():
 
 @api.route("/submit-case", methods=["POST"])
 @jwt_required()
-def submit_Case():
+def submit_case():
     title, body = request.json['title'], request.json['body']
     client_email = get_jwt_identity()
     lawyer_id = request.json['lawyerId']
@@ -146,6 +152,23 @@ def submit_Case():
     db.session.commit()
     return jsonify({"test":"message received"})
 
+@api.route('/accept-case', methods=['POST'])
+def accept_case():
+    case_number = request.json['caseNumber']
+    current_case = Cases.query.filter_by(case_number=case_number).first()
+    current_case.status = "OPEN"
+    db.session.commit()
+    return jsonify(current_case.client.email)
+
+@api.route('/accepted-cases', methods=['GET'])
+@jwt_required()
+def get_accepted_cases():
+    identity = get_jwt_identity()
+    lawyer = Lawyers.query.filter_by(email=identity).first()
+    accepted_cases = [case.serialize() for case in lawyer.cases if case.status == "OPEN"]
+    return accepted_cases
+    
+
 @api.route('/incoming-cases', methods=['GET'])
 @jwt_required()
 def get_incoming_cases():
@@ -154,6 +177,16 @@ def get_incoming_cases():
     incoming_cases = [case.serialize() for case in lawyer.cases if case.status == "INCOMING"]
     incoming_cases.reverse()
     return incoming_cases
+
+
+@api.route("/reject-case", methods=['POST'])
+@jwt_required()
+def reject_case():
+    case_number = request.get_json()['caseNumber']
+    case = Cases.query.filter_by(case_number=case_number).first()
+    db.session.delete(case)
+    db.session.commit()
+    return jsonify(case_number)
 
 
 @api.route("/closed-cases", methods=['POST'])

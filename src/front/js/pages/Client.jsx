@@ -3,6 +3,8 @@ import { BounceLoader } from "react-spinners"
 import { Context } from "../store/appContext"
 import { useNavigate, Link } from "react-router-dom"
 
+import { socket } from ".."
+
 
 export const ProtectedClient = ({ children }) => {
   const { actions } = React.useContext(Context)
@@ -39,6 +41,12 @@ const Client = () => {
     setLawyerList(JSON.parse(localStorage.getItem("lawyers")))
   }
 
+  useEffect(()=>{
+    socket.on("lawyerPictureUpdate", async()=>{
+      await changeLawyerType(areaOfNeed)
+    })
+  }, [])
+
   return (
     <div className="container d-flex flex-column align-items-center">
       <Link to="../current_client">My case(s)</Link>
@@ -49,7 +57,7 @@ const Client = () => {
             return (
               <>
                 <div key={index} style={{ width: "600px", height: "250px" }} className="border border-dark d-flex rounded">
-                  <img className="rounded" width={"240px"} height={"250px"} src={`/${lawyer.photo}`} />
+                  <img className="rounded" width={"240px"} height={"250px"} src={`${process.env.BACKEND_URL}/assets/${lawyer.photo}`} />
                   <h3 className="m-auto">{lawyer.name}</h3>
                   <button className="btn btn-dark" onClick={() => (navigate(`/profile?id=${lawyer.id}`, { state: { id: lawyer.id, name: lawyer.name, photo: lawyer.photo} }))}>SEE MY PROFILE</button>
                 </div>

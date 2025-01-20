@@ -19,6 +19,7 @@ import datetime
 from sendgrid import SendGridAPIClient
 from sendgrid.helpers.mail import Mail
 
+
 # from models import Person
 
 
@@ -31,7 +32,7 @@ app.url_map.strict_slashes = False
 CORS(app)
 
 app.config["JWT_SECRET_KEY"] = "superman"
-app.config["UPLOAD_FOLDER"] = "public/"
+app.config["UPLOAD_FOLDER"] = "src/assets/"
 app.config["JWT_ACCESS_TOKEN_EXPIRES"] = datetime.timedelta(minutes=20)
 jwt_setup = JWTManager(app)
 
@@ -120,6 +121,10 @@ def forgot_password():
     #     print(e)
     
     return jsonify(key)
+
+@app.route('/assets/<path:path>')
+def custom_static(path):
+    return send_from_directory('assets', path)
 
 # this only runs if `$ python src/main.py` is executed
 if __name__ == '__main__':

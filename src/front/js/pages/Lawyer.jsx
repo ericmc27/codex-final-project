@@ -3,6 +3,7 @@ import { useLocation, useNavigate, Link } from 'react-router-dom'
 import { BounceLoader } from "react-spinners"
 import { Context } from '../store/appContext'
 import '../../styles/lawyer.css'
+import { socket } from '..'
 
 export const ProtectedLawyer = ({ children }) => {
   const { actions } = React.useContext(Context)
@@ -28,23 +29,56 @@ export const ProtectedLawyer = ({ children }) => {
 
 
 const Lawyer = () => {
-  const [cases, setCases] = useState([])
-  const {actions} = useContext(Context)
+  const [openCases, setOpenCases] = useState([])
+  const [incomingCases, setIncomingCases] = useState([])
+  const { actions } = useContext(Context)
   const [stats, setStats] = useState({ openCases: 0, incomingCases: 0, tasksDue: 0 });
+  const [currentCase, setCurrentCase] = useState("openCases")
 
-  console.log("casesss", cases)
-  useEffect(()=>{
-    const fetchIncomingCases = async ()=>{
+
+  const acceptCase = async(caseNumber, clientEmail)=>{
+    await actions.acceptCase(caseNumber, clientEmail)
+  }
+
+  const rejectCase = async(caseNumber, clientEmail)=>{
+    await actions.rejectCase(caseNumber, clientEmail)
+  }
+
+  useEffect(() => {
+    const fetchOpenCases = async () => {
+      const data = await actions.getOpenCases()
+      stats.openCases = data.length
+      setOpenCases(data)
+    }
+
+    fetchOpenCases()
+
+    const fetchIncomingCases = async () => {
       const data = await actions.getIncomingCases()
       stats.incomingCases = data.length
-      setCases(data)
+      setIncomingCases(data)
     }
+
     fetchIncomingCases()
+
+    socket.on('newOpenCase', async ()=>{
+      fetchOpenCases()
+      fetchIncomingCases()
+    })
+
+    socket.on('newIncomingCase', async () => {
+      fetchIncomingCases()
+    })
+
+    socket.on('newRejectedCase', async ()=>{
+      fetchOpenCases()
+      fetchIncomingCases()
+    })
   }, [])
 
   return (
-    <div style={{width:"950px"}} className="dashboard m-auto">
-      <header className="dashboard-header">
+    <div style={{ width: "950px"}} className="dashboard m-auto">
+      <header className="dashboard-header bg-dark">
         <h1>Lawyer Dashboard</h1>
         <nav>
           <ul>
@@ -59,11 +93,11 @@ const Lawyer = () => {
         <section className="overview">
           <h2>Overview</h2>
           <div className="stats">
-            <div className="stat-card">
+            <div onClick={()=>(setCurrentCase("openCases"))} role='button' className="stat-card" style={{backgroundColor:`${currentCase==="openCases" ? "darkorange" : ""}`}}>
               <h3>Open Cases</h3>
               <p>{stats.openCases}</p>
             </div>
-            <div className="stat-card">
+            <div onClick={()=>(setCurrentCase("incomingCases"))} role='button' className="stat-card" style={{backgroundColor:`${currentCase==="incomingCases" ? "darkorange" : ""}`}}>
               <h3>Incoming Cases</h3>
               <p>{stats.incomingCases}</p>
             </div>
@@ -77,24 +111,39 @@ const Lawyer = () => {
         <section id="cases">
           <h2>Cases</h2>
           <ul className="list-unstyled">
-              {
-                cases.map((caseObj)=>{
-                  return( 
+            {
+              currentCase === "openCases" ?
+              openCases?.map((caseObj) => {
+                return (
                   <li className='case-item'>
                     <div className='d-flex justify-content-between'>
                       <div><span className='fw-bold'>Title: </span>{caseObj.title}</div>
                       <div><span className='fw-bold'>Case Number: </span>{caseObj.case_number}</div>
                     </div>
                     <div><span className='fw-bold'>Client Name: </span>{caseObj.client.name}</div>
-                    <div style={{height: "150px", backgroundColor:"whitesmoke"}} className='border border-1'>{caseObj.body}</div>
-                    <div className='d-flex justify-content-end mt-3 gap-3'>
-                      <button className='btn btn-success'>Accept</button>
-                      <button className='btn btn-danger'>Decline</button>
-                    </div>
+                    <div style={{ height: "150px", backgroundColor: "whitesmoke" }} className='border border-1'>{caseObj.body}</div>
+                    <button onClick={()=>(rejectCase(caseObj.case_number, caseObj.client.email))} className='btn btn-danger'>Decline</button>
                   </li>
+                )
+              })
+                :
+                incomingCases?.map((caseObj) => {
+                  return (
+                    <li className='case-item'>
+                      <div className='d-flex justify-content-between'>
+                        <div><span className='fw-bold'>Title: </span>{caseObj.title}</div>
+                        <div><span className='fw-bold'>Case Number: </span>{caseObj.case_number}</div>
+                      </div>
+                      <div><span className='fw-bold'>Client Name: </span>{caseObj.client.name}</div>
+                      <div style={{ height: "150px", backgroundColor: "whitesmoke" }} className='border border-1'>{caseObj.body}</div>
+                      <div className='d-flex justify-content-end mt-3 gap-3'>
+                        <button onClick={()=>(acceptCase(caseObj.case_number, caseObj.client.email))} className='btn btn-success'>Accept</button>
+                        <button onClick={()=>(rejectCase(caseObj.case_number, caseObj.client.email))} className='btn btn-danger'>Decline</button>
+                      </div>
+                    </li>
                   )
                 })
-              }
+            }
           </ul>
         </section>
 
@@ -119,13 +168,13 @@ export const Profile = () => {
   const [name, setName] = React.useState(localStorage.getItem("Name"))
   const [casesSolved, setCasesSolved] = React.useState([])
   const [specialty, setSpecialty] = React.useState(localStorage.getItem("Specialty"))
-  const [message, setMessage] = React.useState({title: "", body: ""})
+  const [message, setMessage] = React.useState({ title: "", body: "" })
   const [photo, setPhoto] = React.useState(() => {
     const storedPhoto = localStorage.getItem("Profile Picture")
     return storedPhoto === "null" ? null : storedPhoto
   })
   const [display, setDisplay] = React.useState("casesSolved")
- 
+
 
   const handlePhotoChange = async (e) => {
     const formData = new FormData()
@@ -133,19 +182,12 @@ export const Profile = () => {
     await actions.storeProfilePicture(formData)
   }
 
-  // const handleKeyDown = async(e)=>{
-  //   if(e.key === "Enter"){
-  //     actions.sendMessage(e.target.value)
-  //     e.target.value = ""
-  //   }
-  // }
-
-  const handleMessage = (e)=>{
-    const {id, value} = e.target
-    setMessage(prev=>({...prev, [id]:value}))
+  const handleMessage = (e) => {
+    const { id, value } = e.target
+    setMessage(prev => ({ ...prev, [id]: value }))
   }
 
-  const caseSubmitted = async ()=>{
+  const caseSubmitted = async () => {
     const title = document.getElementById("title")
     const body = document.getElementById("body")
 
@@ -154,27 +196,36 @@ export const Profile = () => {
     body.value = ""
   }
 
-  React.useEffect(()=>{
-    const casesSolved = async ()=>{
+  React.useEffect(() => {
+    const casesSolved = async () => {
       const data = await actions.closedCases(lawyerId)
       setCasesSolved(data)
     }
 
     casesSolved()
+
+    socket.on('lawyerPictureUpdate', () => {
+      const storedPhoto = localStorage.getItem("Profile Picture")
+      if (storedPhoto === "null") {
+        return nulll
+      } else {
+        setPhoto(storedPhoto)
+      }
+    })
   }, [])
-  
+
   return (
     <div className='d-flex'>
-      <div style={{border: "1px solid #3E362E", height: "600px", width: "300px" }} className='d-flex flex-column align-items-center ms-5 mt-3 rounded'>
+      <div style={{ border: "1px solid #3E362E", height: "600px", width: "300px" }} className='d-flex flex-column align-items-center ms-5 mt-3 rounded'>
         <input onChange={handlePhotoChange} type='file' name='file' accept='image/*' className='d-none' id='profile-picture' />
         <label className='mt-4' style={{ cursor: "pointer" }} htmlFor='profile-picture'>
-          <img className='border rounded-circle' style={{ height: "200px", width: "200px" }} src={state?.photo || lawyer?.photo || photo || `/profile-picture-placeholder.jpg`}></img>
+          <img className='border rounded-circle' style={{ height: "200px", width: "200px" }} src={state?.photo || lawyer?.photo || photo ? `${process.env.BACKEND_URL}/assets/${state?.photo || lawyer?.photo || photo}` : `/profile-picture-placeholder.jpg`}></img>
         </label>
 
         <h2 className='text-capitalize'>{name}</h2>
         <h4>{specialty} Lawyer</h4>
 
-        <div style={{ height: "200px", width: "200px", backgroundColor: "#FF8C00", color:"#3E362E"}} className='fw-bold mt-5 rounded'>
+        <div style={{ height: "200px", width: "200px", backgroundColor: "#FF8C00", color: "#3E362E" }} className='fw-bold mt-5 rounded'>
           <label className='label-case mt-2 ms-3' onClick={() => (setDisplay("casesSolved"))}><img width={"40px"} src='/cases-solved.png' /> CASES SOLVED</label>
           <label className='label-case mt-3 ms-3' onClick={() => (setDisplay("submitCase"))}><img width={"45px"} src='/legal-document.png' />SUBMIT A CASE</label>
           {/* <label className='label-case mt-3 ms-3' onClick={() => (setDisplay("contactMe"))}><img width={"45px"} src='/contact-me.png' /> CONTACT ME</label> */}
@@ -193,21 +244,21 @@ export const Profile = () => {
             }
           </div>
           : display === "submitCase" ?
-            <div style={{ height: "545px", width: "570px", backgroundColor: "#3E362E"}} className='d-flex flex-column justify-content-center align-items-center m-auto rounded border'>
-              <label htmlFor='title' className='text-white mb-3' style={{marginTop: "40px"}}>TITLE</label>
-              <input type='text' id='title' className="mb-4" value={message.title} onChange={handleMessage}/>
+            <div style={{ height: "545px", width: "570px", backgroundColor: "#3E362E" }} className='d-flex flex-column justify-content-center align-items-center m-auto rounded border'>
+              <label htmlFor='title' className='text-white mb-3' style={{ marginTop: "40px" }}>TITLE</label>
+              <input type='text' id='title' className="mb-4" value={message.title} onChange={handleMessage} />
               <label className='text-white mb-3'>CASE BRIEF DESCRIPTION</label>
-              <textarea id='body' className='overflow-hidden' style={{ height: "350px", width: "500px"}} value={message.body} onChange={handleMessage}></textarea>
-              <button type='button' className='btn btn-primary mt-3' style={{marginBottom: "25px"}} onClick={caseSubmitted}>Send case</button>
+              <textarea id='body' className='overflow-hidden' style={{ height: "350px", width: "500px" }} value={message.body} onChange={handleMessage}></textarea>
+              <button type='button' className='btn btn-primary mt-3' style={{ marginBottom: "25px" }} onClick={caseSubmitted}>Send case</button>
             </div>
 
-         :
-      <div>
-        <div style={{height: "485px", width: "500px", margin: "60px 0px 0px 300px"}} className='d-flex flex-column border rounded'>
-              <div style={{height:"22px", width:"24px"}} className='rounded-circle border ms-auto me-4 mt-4'></div>
-              <input className='mt-auto' type="text" onKeyDown={handleKeyDown} style={{width:"500px"}}/>
-        </div>
-      </div>}
+            :
+            <div>
+              <div style={{ height: "485px", width: "500px", margin: "60px 0px 0px 300px" }} className='d-flex flex-column border rounded'>
+                <div style={{ height: "22px", width: "24px" }} className='rounded-circle border ms-auto me-4 mt-4'></div>
+                <input className='mt-auto' type="text" onKeyDown={handleKeyDown} style={{ width: "500px" }} />
+              </div>
+            </div>}
     </div>
   )
 }
