@@ -53,7 +53,7 @@ export const CurrentClient = () => {
       {isLoading ? (
         <p>Loading cases...</p>
       ) : (
-        <div className="container-fluid d-flex">
+        <div className="container-fluid d-flex justify-content-between">
           <div className="d-flex flex-column align-items-center" style={{marginStart: "-450px"}}>
             <h3 className="mt-3">My Open Cases</h3>
             <div className="openCases d-flex flex-column rounded" width={"150px"} height={"250px"} style={{ margin: "25px 0px 50px 0px", border: "1px solid black", backgroundColor: "whitesmoke" }}>
@@ -74,8 +74,8 @@ export const CurrentClient = () => {
 
           </div>
 
-          <div className="d-flex flex-column align-items-center ms-5">
-            <h1>My Closed Cases</h1>
+          <div className="d-flex flex-column align-items-center bg-danger" style={{marginEnd: "-600px"}}>
+            <h3>My Closed Cases</h3>
             <div className="closedCases border d-flex flex-column rounded" width={"300px"} height={"250px"} style={{ margin: "25px 0px 50px 0px" }}>
               <div className="d-flex flex-column gap-4">
                 {clientCases
