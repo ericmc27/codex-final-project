@@ -33,7 +33,7 @@ CORS(app)
 
 app.config["JWT_SECRET_KEY"] = "superman"
 app.config["UPLOAD_FOLDER"] = "src/assets/"
-app.config["JWT_ACCESS_TOKEN_EXPIRES"] = datetime.timedelta(seconds=20)
+app.config["JWT_ACCESS_TOKEN_EXPIRES"] = datetime.timedelta(minutes=15)
 app.config["JWT_REFRESH_TOKEN_EXPIRES"] = datetime.timedelta(minutes=1440)
 jwt_setup = JWTManager(app)
 

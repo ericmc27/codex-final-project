@@ -110,7 +110,7 @@ const getState = ({ getStore, getActions, setStore }) => {
 						if (response.status === 200) {
 							const data = await response.json();
 							localStorage.setItem("JWT", data.token)
-							localStorage.setItem("CHAT", data.chatToken)
+							localStorage.setItem("refresh_token", data.refresh_token)
 
 							if (data.userType === "Client") {
 								localStorage.setItem("Area of Need", data.need)
