@@ -27,6 +27,7 @@ class Clients(User, db.Model):
     address = db.Column(db.String, unique=False, nullable=False)
     area_of_need = db.Column(db.String, unique=False, nullable=False)
 
+
     def __init__(self, name, email, password, phone, address, area_of_need):
         self.name = name
         self.email = email
@@ -58,6 +59,7 @@ class Lawyers(User, db.Model):
     address = db.Column(db.String, unique=False, nullable=False)
     photo = db.Column(db.String,  unique=True, nullable=True)
     specialty = db.Column (db.String, unique=False, nullable=False)
+
 
     cases = db.relationship("Cases", back_populates="lawyer")
    
@@ -110,6 +112,7 @@ class Cases(db.Model):
     def serialize(self):
         return {
            'client':self.client.serialize(),
+           'lawyer':self.lawyer.serialize(),
            'title':self.title,
            'body':self.body,
            'case_number':self.case_number
