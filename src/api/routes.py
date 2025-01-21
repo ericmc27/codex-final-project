@@ -2,7 +2,7 @@
 This module takes care of starting the API Server, Loading the DB and Adding the endpoints
 """
 from flask import Flask, request, jsonify, url_for, Blueprint
-from flask_jwt_extended import create_access_token, jwt_required, get_jwt_identity
+from flask_jwt_extended import create_access_token, create_refresh_token, jwt_required, get_jwt_identity
 from api.models import db, Clients, Lawyers, Cases
 from api.utils import generate_sitemap, APIException
 from flask_cors import CORS
@@ -90,7 +90,8 @@ def login():
             db.session.commit()
             claims = {"id":user_exists.id, "role":user_type}
             token = create_access_token(identity=user_exists.email, additional_claims=claims)
-            json_data = jsonify({"token":token, "need":user_exists.area_of_need, "userType":user_type})
+            refresh_token = create_refresh_token(identity=user_exists.email)
+            json_data = jsonify({"token":token, "refresh_token":refresh_token, "need":user_exists.area_of_need, "userType":user_type})
     else:
         user_exists = Lawyers.query.filter_by(email=email).first()
 
@@ -99,13 +100,22 @@ def login():
             db.session.commit()
             claims = {"id":user_exists.id, "role":user_type}
             token = create_access_token(identity=user_exists.email, additional_claims=claims)
-            json_data = jsonify({"token":token, "name":user_exists.name, "specialty":user_exists.specialty, "photo":user_exists.photo})
+            refresh_token = create_refresh_token(identity=user_exists.email)
+            json_data = jsonify({"token":token,  "refresh_token":refresh_token, "name":user_exists.name, "specialty":user_exists.specialty, "photo":user_exists.photo})
 
 
     if not user_exists or not user_exists.check_password(password):
         return jsonify({"message":"login failed"}), 401
     else:
         return json_data, 200
+    
+
+@api.route("/refresh", methods=["POST"])
+@jwt_required(refresh=True)  # Require a refresh token to access this endpoint
+def refresh():
+    current_user_email = get_jwt_identity()  # Get the identity from the refresh token
+    new_access_token = create_access_token(identity=current_user_email)  # Generate a new access token
+    return jsonify({"token": new_access_token}), 200
     
   
 @api.route('/client-cases', methods=['GET'])
