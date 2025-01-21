@@ -25,5 +25,19 @@ socket.on('lawyerRejectedYourCase', ()=>{
     alert("your case was rejected")
 })
 
+setInterval(async ()=>{
+    const refresh_jwt = localStorage.getItem('refresh_token')
+    
+    const response = await fetch("https://jubilant-yodel-r4rxq5rp7rj725jx-3001.app.github.dev/api/refresh", {
+        method: 'POST',
+        headers: {
+            'Authorization': `Bearer ${refresh_jwt}`
+        }
+    })
+
+    const data = await response.json()
+    localStorage.setItem("JWT", data.token)
+}, 840000)
+
 //render your react application
 ReactDOM.render(<Layout />, document.querySelector("#app"));
