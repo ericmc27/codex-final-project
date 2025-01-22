@@ -52,6 +52,7 @@ def add_new_lawyer():
     address = data.get("address")
     photo = data.get("photo")
     specialty = data.get("specialty")
+    bar_number = data.get("bar_number")
 
     user_exists = Lawyers.query.filter_by(email=email).first()
 
@@ -59,7 +60,7 @@ def add_new_lawyer():
         return jsonify({"message": "Account exists"}), 409
     else:
         new_user = Lawyers(name=name, email=email, password=password, \
-                        phone=phone, address=address, photo=photo, specialty=specialty)
+                        phone=phone, address=address, photo=photo, specialty=specialty, bar_number=bar_number)
         new_user.generate_password()
         db.session.add(new_user)
         db.session.commit()
