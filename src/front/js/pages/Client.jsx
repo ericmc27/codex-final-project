@@ -68,8 +68,8 @@ const Client = () => {
       </div>
 
 
-      <label style={{ top: "110px", left: "87%" }} className="position-absolute">Lawyers Type</label>
-      <ul style={{ top: "150px", left: "82%", width: "250px", height: "500px", overflowY: "auto", maxHeight: "500px", border: "1px solid #3E362E" }} className="rounded list-unstyled position-absolute">
+      <label style={{ top: "110px", left: "84%", right: "5%" }} className="position-absolute"><big>Lawyer Specialties:</big> <small>(Click below to select a different specialty)</small></label>
+      <ul style={{ top: "190px", left: "82%", width: "250px", height: "500px", overflowY: "auto", maxHeight: "500px", border: "1px solid #3E362E" }} className="rounded list-unstyled position-absolute">
         {
           lawyersType.map((lawyer, index) => {
             return (
