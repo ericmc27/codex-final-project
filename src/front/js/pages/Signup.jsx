@@ -66,7 +66,7 @@ const Signup = () => {
 
         </form>
         :
-        <form onSubmit={(e) => (actions.signup(e, userData, userType, navigate))} className="m-auto border border-1 rounded d-flex flex-column align-items-center" style={{ width: "400px", height: "520px", backgroundColor: "#3E362E", color:"#e8e7df"}}>
+        <form onSubmit={(e) => (actions.signup(e, userData, userType, navigate))} className="m-auto border border-1 rounded d-flex flex-column align-items-center" style={{ width: "400px", height: "600px", backgroundColor: "#3E362E", color:"#e8e7df"}}>
           <CommonFields userData={userData} handleChange={handleChange} />
           <LawyerFields userData={userData} handleChange={handleChange} />
           <button style={{backgroundColor: "#e8e7df", color: "#FF8C00"}} className="btn btn-primary mt-3" type="submit">Signup</button>

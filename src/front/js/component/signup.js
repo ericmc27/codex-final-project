@@ -136,6 +136,7 @@ export const LawyerFields = ({ userData, handleChange }) => {
         value={userData.bar_number}
         onChange={handleChange}
         required
+        style={{width:"300px"}}
       />
 
       
