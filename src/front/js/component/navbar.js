@@ -7,8 +7,6 @@ export const Navbar = () => {
 	const handleLogout = () => {
 		// Remove all storage items
 		localStorage.clear();
-		// Revoke Token
-		
 		// Redirect to the login page
 		navigate("/login");
 	};
