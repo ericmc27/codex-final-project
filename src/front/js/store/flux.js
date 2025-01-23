@@ -34,7 +34,7 @@ const getState = ({ getStore, getActions, setStore }) => {
 			],
 		},
 		actions: {
-			signup: async (e, { name, email, password, phone, address, areaOfNeed, specialty }, userType, navigate) => {
+			signup: async (e, { name, email, password, phone, address, areaOfNeed, specialty, bar_number }, userType, navigate) => {
 				e.preventDefault();
 				let newContact;
 
@@ -56,6 +56,7 @@ const getState = ({ getStore, getActions, setStore }) => {
 						address,
 						photo: null,
 						specialty,
+						bar_number
 					}
 				}
 

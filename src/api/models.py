@@ -58,12 +58,13 @@ class Lawyers(User, db.Model):
     phone = db.Column(db.String(15), unique=True, nullable=False)
     address = db.Column(db.String, unique=False, nullable=False)
     photo = db.Column(db.String,  unique=True, nullable=True)
-    specialty = db.Column (db.String, unique=False, nullable=False)
+    specialty = db.Column(db.String, unique=False, nullable=False)
+    bar_number = db.Column(db.String, unique=True, nullable=False)
 
 
     cases = db.relationship("Cases", back_populates="lawyer")
    
-    def __init__(self, name, email, password, phone, address, photo, specialty):
+    def __init__(self, name, email, password, phone, address, photo, specialty, bar_number):
         self.name = name
         self.email = email
         self.password = password
@@ -71,6 +72,7 @@ class Lawyers(User, db.Model):
         self.address = address
         self.photo = photo
         self.specialty = specialty
+        self.bar_number = bar_number
 
     def serialize(self):
         return {
@@ -80,6 +82,7 @@ class Lawyers(User, db.Model):
             "phone": self.phone,
             "address": self.address,
             "photo": self.photo,
+            "bar_number": self.bar_number
         }
 
     

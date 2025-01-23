@@ -9,7 +9,7 @@ import { useLocation, useNavigate } from "react-router-dom";
 const Signup = () => {
   const location = useLocation()
   const [userType, setUserType] = React.useState(location.state?.userType || "Client")
-  const [userData, setUserData] = React.useState({name: '', email: '', password: '', phone: '', address: '', areaOfNeed: '', specialty: ''})
+  const [userData, setUserData] = React.useState({name: '', email: '', password: '', phone: '', address: '', areaOfNeed: '', specialty: '', bar_number: ''})
   // const [lawyerFields, setLawyerFields] = React.useState({ photo: '', specialty: '', barNumber: '', lawFirm: '', credentials: '' })
   const { actions } = React.useContext(Context)
   const navigate = useNavigate()
@@ -28,7 +28,7 @@ const Signup = () => {
     const { value } = e.target
   
     if(value !== userType){
-      setUserData({name: '', email: '', password: '', phone: '', address: '', areaOfNeed: '', specialty: ''})
+      setUserData({name: '', email: '', password: '', phone: '', address: '', areaOfNeed: '', specialty: '', bar_number: ''})
       setUserType(value)
     }
   }
@@ -59,14 +59,14 @@ const Signup = () => {
       </div>
 
       {userType === "Client" ?
-        <form onSubmit={(e) => (actions.signup(e, userData, userType))} className="m-auto border border-1 rounded d-flex flex-column align-items-center bg-white" style={{ width: "400px", height: "520px"}}>
+        <form onSubmit={(e) => (actions.signup(e, userData, userType, navigate))} className="m-auto border border-1 rounded d-flex flex-column align-items-center bg-white" style={{ width: "400px", height: "520px"}}>
            <CommonFields userData={userData} handleChange={handleChange} />
            <AreaOfNeed userData={userData} handleChange={handleChange} />
            <button className="btn btn-dark mt-3" type="submit">Signup</button>
 
         </form>
         :
-        <form onSubmit={(e) => (actions.signup(e, userData, userType, navigate))} className="m-auto border border-1 rounded d-flex flex-column align-items-center" style={{ width: "400px", height: "520px", backgroundColor: "#3E362E", color:"#e8e7df"}}>
+        <form onSubmit={(e) => (actions.signup(e, userData, userType, navigate))} className="m-auto border border-1 rounded d-flex flex-column align-items-center" style={{ width: "400px", height: "600px", backgroundColor: "#3E362E", color:"#e8e7df"}}>
           <CommonFields userData={userData} handleChange={handleChange} />
           <LawyerFields userData={userData} handleChange={handleChange} />
           <button style={{backgroundColor: "#e8e7df", color: "#FF8C00"}} className="btn btn-primary mt-3" type="submit">Signup</button>
