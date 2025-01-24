@@ -11,7 +11,7 @@ import "../styles/index.css";
 import Layout from "./layout";
 import {io} from "socket.io-client"
 
-export const socket = io("wss://fictional-broccoli-pjg645gp7jrgh7699-5000.app.github.dev/")
+export const socket = io("wss://turbo-space-robot-x5947g9vrv7vfpgvr-5000.app.github.dev")
 
 socket.on('connect', ()=>{
     socket.emit('addUser', localStorage.getItem("JWT"))
@@ -27,8 +27,8 @@ socket.on('lawyerRejectedYourCase', ()=>{
 
 setInterval(async ()=>{
     const refresh_jwt = localStorage.getItem('refresh_token')
-    
-    const response = await fetch("https://jubilant-yodel-r4rxq5rp7rj725jx-3001.app.github.dev/api/refresh", {
+    console.log("refresh tokennnnnnnnnnnnnn")
+    const response = await fetch(`${process.env.BACKEND_URL}/api/refresh`, {
         method: 'POST',
         headers: {
             'Authorization': `Bearer ${refresh_jwt}`

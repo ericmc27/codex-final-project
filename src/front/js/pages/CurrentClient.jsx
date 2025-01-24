@@ -1,26 +1,16 @@
-import React, { useEffect, useContext, useState } from "react";
-import { Context } from "../store/appContext";
-import { useNavigate } from "react-router-dom";
+import React, { useEffect, useState } from "react";
+import {socket} from ".."
+
 
 export const CurrentClient = () => {
-  const { store, actions } = useContext(Context);
-  const navigate = useNavigate();
-
   const [clientCases, setClientCases] = useState([]);
-  const [isLoading, setIsLoading] = useState(false);
-  const [errorMessage, setErrorMessage] = useState("");
-
-  const CASE_STATUS = {
-    OPEN: "OPEN",
-    CLOSED: "CLOSED",
-  };
+  const [lawyerEmail, setLawyerEmail] = useState("")
+  const [lawyerPhoto, setLawyerPhoto] = useState("")
+  const [messenger, setMessenger] = useState(false)
+  const [messengerText, setMessengerText] = useState("")
 
   useEffect(() => {
     const fetchClientCases = async () => {
-      setIsLoading(true);
-      setErrorMessage("");
-
-      try {
         const response = await fetch(`${process.env.BACKEND_URL}/api/client-cases`, {
           method: "GET",
           headers: {
@@ -34,66 +24,77 @@ export const CurrentClient = () => {
         }
 
         const data = await response.json();
-        console.log("Cases:", data);
-        setClientCases(data.cases);
-      } catch (error) {
-        console.error("Error fetching client cases:", error);
-        setErrorMessage("Unable to fetch cases. Please try again later.");
-      } finally {
-        setIsLoading(false);
-      }
-    };
+        setClientCases(data.cases)
+    }
 
     fetchClientCases();
+
+    socket.on('lawyerMessage', (lawyerMessage)=>{
+      console.log(lawyerMessage)
+      const messagesDiv = document.getElementById('messages')
+      const messageDiv = document.createElement('div')
+      messageDiv.style.cssText = 'background-color: #e8e7df; height: auto; width: 100px; margin-top: 13px'
+      messageDiv.className = 'border rounded'
+      messageDiv.innerText = lawyerMessage
+      messagesDiv.append(messageDiv)
+    })
   }, []);
+
+  const handleOnClick = (email, photo)=>{
+    setMessenger(flag=>!flag)
+    setLawyerEmail(email)
+    setLawyerPhoto(photo)
+  }
+
+  const handleChange = (e)=>{
+    setMessengerText(e.target.value)
+  }
+
+  const handleKeyDown = (e)=>{
+    if(e.key==="Enter"){
+     socket.emit("messageToLawyer", lawyerEmail, messengerText)
+     const messagesDiv = document.getElementById('messages')
+     const messageDiv = document.createElement('div')
+     messageDiv.style.cssText = 'background-color: #e8e7df; height: auto; width: 100px; margin-top: 13px'
+     messageDiv.className = 'border rounded'
+     messageDiv.innerText = messengerText
+     messagesDiv.append(messageDiv)
+     setMessengerText("")
+    }
+  }
+  
+
 
   return (
     <div className="container d-flex flex-column align-items-center">
-      {errorMessage && <p className="error">{errorMessage}</p>}
-      {isLoading ? (
-        <p>Loading cases...</p>
-      ) : (
         <div className="container-fluid d-flex justify-content-between">
           <div className="d-flex flex-column align-items-center" style={{marginStart: "-450px"}}>
             <h3 className="mt-3">My Open Cases</h3>
             <div className="openCases d-flex flex-column rounded" width={"150px"} height={"250px"} style={{ margin: "25px 0px 50px 0px", border: "1px solid black", backgroundColor: "whitesmoke" }}>
-              <div className="d-flex flex-column gap-4">
+              <div style={{padding:"25px"}} className="d-flex flex-column gap-4">
                 {clientCases
                   .map((c) => (
                     <div key={c.id}>
-                      <h5>Case Number: {c.case_number}</h5>
+                      <h5><label className="text-bold">Case Number:</label> {c.case_number}</h5>
                       <div>
                         <p><strong>Lawyer: </strong>{c.lawyer.name}</p>
                         <p><strong>Lawyer Email: </strong> {c.lawyer_email}</p>
+                        <img style={{height:"50px", width:"50px", cursor:"pointer", marginStart:"400px"}} onClick={()=>(handleOnClick(c.lawyer.email, c.lawyer.photo))} src="/chat.png"/>
                       </div>
                     </div>
                   ))}
               </div>
             </div>
-
-
-          </div>
-
-          <div className="d-flex flex-column align-items-center bg-danger" style={{marginEnd: "-600px"}}>
-            <h3>My Closed Cases</h3>
-            <div className="closedCases border d-flex flex-column rounded" width={"300px"} height={"250px"} style={{ margin: "25px 0px 50px 0px" }}>
-              <div className="d-flex flex-column gap-4">
-                {clientCases
-                  .filter((c) => c.status === CASE_STATUS.CLOSED)
-                  .map((c) => (
-                    <div key={c.id}>
-                      <h3>Case Number: {c.case_number}</h3>
-                      <div>
-                        <p><strong>Lawyer Name: </strong>{c.lawyer_name}</p>
-                      </div>
-                    </div>
-                  ))}
-              </div>
             </div>
-          </div>
-
+                  {
+                    messenger &&
+                    <div className="d-flex flex-column" style={{height: "450px", width: "500px", border: "2px solid black", margin: "80px 120px 0px 0px", backgroundColor:"whitesmoke"}}>
+                      <img className="rounded-circle d-block" style={{height:"80px", width:"80px", margin:"14px 6px 0px auto"}} src={`${process.env.BACKEND_URL}/assets/${lawyerPhoto}`}/>
+                      <div id="messages"></div>
+                      <input onChange={handleChange} onKeyDown={handleKeyDown} value={messengerText} style={{width:"497px"}} className="mt-auto" type="text"/>
+                    </div>
+                  }
         </div>
-      )}
     </div>
   );
 };

@@ -258,6 +258,19 @@ const getState = ({ getStore, getActions, setStore }) => {
 			getProfilePicture: ()=>{
 				return localStorage.getItem("Profile Picture")
 			},
+			clientCases: async () => {
+						const response = await fetch(`${process.env.BACKEND_URL}/api/client-cases`, {
+						  method: "GET",
+						  headers: {
+							Authorization: `Bearer ${localStorage.getItem("JWT")}`,
+							"Content-Type": "application/json",
+						  },
+						})
+				
+						if (!response.ok) {
+						  throw new Error(`Error: ${response.status} - ${response.statusText}`);
+						}
+			},
 			verifyJwt: async () => {
 				let token = getActions().getToken()
 

@@ -5,6 +5,10 @@ import { Context } from '../store/appContext'
 import '../../styles/lawyer.css'
 import { socket } from '..'
 
+
+
+
+
 export const ProtectedLawyer = ({ children }) => {
   const { actions } = React.useContext(Context)
   const [token, setToken] = React.useState(undefined)
@@ -32,22 +36,51 @@ const Lawyer = () => {
   const [openCases, setOpenCases] = useState([])
   const [incomingCases, setIncomingCases] = useState([])
   const { actions } = useContext(Context)
-  const [stats, setStats] = useState({ openCases: 0, incomingCases: 0, tasksDue: 0 });
+  const [stats, setStats] = useState({ openCases: 0, incomingCases: 0});
   const [currentCase, setCurrentCase] = useState("openCases")
+  const [clientsList, setClientsList] = useState({})
+  const [currentClient, setCurrentClient] = useState("")
+  const [lawyerMessage, setLawyerMessage] = useState("")
+  const [showMessage, setShowMessage] = useState(false)
 
 
-  const acceptCase = async(caseNumber, clientEmail)=>{
+  const acceptCase = async (caseNumber, clientEmail) => {
     await actions.acceptCase(caseNumber, clientEmail)
   }
 
-  const rejectCase = async(caseNumber, clientEmail)=>{
+  const rejectCase = async (caseNumber, clientEmail) => {
     await actions.rejectCase(caseNumber, clientEmail)
+  }
+
+  const handleClistListClick = (client)=>{
+    setCurrentClient(client)
+    console.log(client)
+    console.log(clientsList)
+    setShowMessage(prev=>!prev)
+  }
+
+  const handleMessage = (e)=>{
+    setLawyerMessage(e.target.value)
+  }
+
+  const handleKeyDown = (e)=>{
+    if(e.key==="Enter"){
+      console.log(lawyerMessage)
+      socket.emit('messageToClient', currentClient, lawyerMessage)
+      const messagesDiv = document.getElementById('messageBox')
+      const messageDiv = document.createElement('div')
+      messageDiv.style.cssText = 'background-color: #e8e7df; height: auto; width: 100px; margin-top: 13px'
+      messageDiv.className = 'border rounded'
+      messageDiv.innerText = lawyerMessage
+      messagesDiv.append(messageDiv)
+      setLawyerMessage("")
+    }
   }
 
   useEffect(() => {
     const fetchOpenCases = async () => {
       const data = await actions.getOpenCases()
-      stats.openCases = data.length
+      setStats(prev => ({ ...prev, openCases: data.length }))
       setOpenCases(data)
     }
 
@@ -55,13 +88,13 @@ const Lawyer = () => {
 
     const fetchIncomingCases = async () => {
       const data = await actions.getIncomingCases()
-      stats.incomingCases = data.length
+      setStats(prev => ({ ...prev, incomingCases: data.length }))
       setIncomingCases(data)
     }
 
     fetchIncomingCases()
 
-    socket.on('newOpenCase', async ()=>{
+    socket.on('newOpenCase', async () => {
       fetchOpenCases()
       fetchIncomingCases()
     })
@@ -70,14 +103,27 @@ const Lawyer = () => {
       fetchIncomingCases()
     })
 
-    socket.on('newRejectedCase', async ()=>{
+    socket.on('newRejectedCase', async () => {
       fetchOpenCases()
       fetchIncomingCases()
     })
+
+    socket.on('clientMessage', (message, client) => {
+      const messageBox = document.getElementById('messageBox')
+      const childDiv = document.createElement('div')
+      childDiv.style.cssText = 'background-color: #e8e7df; height: auto; width: 100px; margin-top: 13px'
+      childDiv.className = 'border rounded'
+      childDiv.innerHTML = message
+      setClientsList(prev=>({...prev, [client]:message}))
+      messageBox.appendChild(childDiv)
+      messageBox.scrollTop = messageBox.scrollHeight
+    })
+
   }, [])
 
+
   return (
-    <div style={{ width: "950px"}} className="dashboard m-auto">
+    <div style={{ width: "950px" }} className="dashboard m-auto">
       <header className="dashboard-header bg-dark">
         <h1>Lawyer Dashboard</h1>
         <nav>
@@ -91,58 +137,87 @@ const Lawyer = () => {
 
       <main>
         <section className="overview">
-          <h2>Overview</h2>
           <div className="stats">
-            <div onClick={()=>(setCurrentCase("openCases"))} role='button' className="stat-card" style={{backgroundColor:`${currentCase==="openCases" ? "darkorange" : ""}`}}>
+            <div onClick={() => (setCurrentCase("openCases"))} role='button' className="stat-card" style={{ backgroundColor: `${currentCase === "openCases" ? "darkorange" : ""}` }}>
               <h3>Open Cases</h3>
               <p>{stats.openCases}</p>
             </div>
-            <div onClick={()=>(setCurrentCase("incomingCases"))} role='button' className="stat-card" style={{backgroundColor:`${currentCase==="incomingCases" ? "darkorange" : ""}`}}>
+            <div onClick={() => (setCurrentCase("incomingCases"))} role='button' className="stat-card" style={{ backgroundColor: `${currentCase === "incomingCases" ? "darkorange" : ""}` }}>
               <h3>Incoming Cases</h3>
               <p>{stats.incomingCases}</p>
             </div>
-            <div className="stat-card">
-              <h3>Tasks Due</h3>
-              <p>{stats.tasksDue}</p>
+            <div onClick={() => (setCurrentCase("messages"))} role='button' className="stat-card" style={{ backgroundColor: `${currentCase === "messages" ? "darkorange" : ""}` }}>
+              <h3>MESSAGES</h3>
+              <p>{stats.messages}</p>
             </div>
           </div>
         </section>
 
         <section id="cases">
-          <h2>Cases</h2>
           <ul className="list-unstyled">
             {
               currentCase === "openCases" ?
-              openCases?.map((caseObj) => {
-                return (
-                  <li className='case-item'>
-                    <div className='d-flex justify-content-between'>
-                      <div><span className='fw-bold'>Title: </span>{caseObj.title}</div>
-                      <div><span className='fw-bold'>Case Number: </span>{caseObj.case_number}</div>
-                    </div>
-                    <div><span className='fw-bold'>Client Name: </span>{caseObj.client.name}</div>
-                    <div style={{ height: "150px", backgroundColor: "whitesmoke" }} className='border border-1'>{caseObj.body}</div>
-                    <button onClick={()=>(rejectCase(caseObj.case_number, caseObj.client.email))} className='btn btn-danger'>Decline</button>
-                  </li>
-                )
-              })
-                :
-                incomingCases?.map((caseObj) => {
+                openCases?.map((caseObj) => {
                   return (
-                    <li className='case-item'>
-                      <div className='d-flex justify-content-between'>
-                        <div><span className='fw-bold'>Title: </span>{caseObj.title}</div>
-                        <div><span className='fw-bold'>Case Number: </span>{caseObj.case_number}</div>
-                      </div>
-                      <div><span className='fw-bold'>Client Name: </span>{caseObj.client.name}</div>
-                      <div style={{ height: "150px", backgroundColor: "whitesmoke" }} className='border border-1'>{caseObj.body}</div>
-                      <div className='d-flex justify-content-end mt-3 gap-3'>
-                        <button onClick={()=>(acceptCase(caseObj.case_number, caseObj.client.email))} className='btn btn-success'>Accept</button>
-                        <button onClick={()=>(rejectCase(caseObj.case_number, caseObj.client.email))} className='btn btn-danger'>Decline</button>
-                      </div>
-                    </li>
+                    <>
+                      <h2>Cases</h2>
+                      <li className='case-item'>
+                        <div className='d-flex justify-content-between'>
+                          <div><span className='fw-bold'>Title: </span>{caseObj.title}</div>
+                          <div><span className='fw-bold'>Case Number: </span>{caseObj.case_number}</div>
+                        </div>
+                        <div><span className='fw-bold'>Client Name: </span>{caseObj.client.name}</div>
+                        <div style={{ height: "150px", backgroundColor: "whitesmoke" }} className='border border-1'>{caseObj.body}</div>
+                        <button onClick={() => (rejectCase(caseObj.case_number, caseObj.client.email))} className='btn btn-danger'>Decline</button>
+                      </li>
+                    </>
+
                   )
                 })
+                :
+                currentCase === "incomingCases" ?
+                  incomingCases?.map((caseObj) => {
+                    return (
+                      <>
+                        <h2>Cases</h2>
+                        <li className='case-item'>
+                          <div className='d-flex justify-content-between'>
+                            <div><span className='fw-bold'>Title: </span>{caseObj.title}</div>
+                            <div><span className='fw-bold'>Case Number: </span>{caseObj.case_number}</div>
+                          </div>
+                          <div><span className='fw-bold'>Client Name: </span>{caseObj.client.name}</div>
+                          <div style={{ height: "150px", backgroundColor: "whitesmoke" }} className='border border-1'>{caseObj.body}</div>
+                          <div className='d-flex justify-content-end mt-3 gap-3'>
+                            <button onClick={() => (acceptCase(caseObj.case_number, caseObj.client.email))} className='btn btn-success'>Accept</button>
+                            <button onClick={() => (rejectCase(caseObj.case_number, caseObj.client.email))} className='btn btn-danger'>Decline</button>
+                          </div>
+                        </li>
+                      </>
+
+                    )
+                  })
+                  :
+                  <div className='d-flex' style={{height: "400px", width: "915px", backgroundColor:'white', margin: "20px 50px 0px 0px"}}>
+                    <div className='border d-flex justify-content-center' style={{height:"350px", width:"160px", marginTop:"20px", marginLeft:"25px", backgroundColor:"whitesmoke"}}>
+                      {
+                        Object.keys(clientsList).map(client=>{
+                          return <div onClick={()=>(handleClistListClick(client))}>{client}</div>
+                        }
+                      )}
+                    </div>
+
+
+                    {
+                      showMessage &&
+                      <>
+                          <div id='messageBox' style={{height:"347px", width:"680px", maxHeight:"310px", overflowY:"auto", marginTop:"20px", marginLeft:"15px"}} className='d-flex flex-column border'>
+                            <div style={{backgroundColor: '#e8e7df', height: 'auto', width: '100px', marginTop: '13px'}}>{clientsList[currentClient]}</div>
+                            <input onChange={handleMessage} onKeyDown={handleKeyDown} value={lawyerMessage} style={{height:"40px", width:"683px", left:"500px", top:"625px"}}  className='rounded position-absolute' type='text'/>
+                          </div>
+                      </>
+                    }
+                 
+                  </div>
             }
           </ul>
         </section>
@@ -225,10 +300,9 @@ export const Profile = () => {
         <h2 className='text-capitalize'>{name}</h2>
         <h4>{specialty} Lawyer</h4>
 
-        <div style={{ height: "200px", width: "200px", backgroundColor: "#FF8C00", color: "#3E362E" }} className='fw-bold mt-5 rounded'>
+        <div style={{ height: "130px", width: "200px", backgroundColor: "#FF8C00", color: "#3E362E" }} className='fw-bold mt-5 rounded'>
           <label className='label-case mt-2 ms-3' onClick={() => (setDisplay("casesSolved"))}><img width={"40px"} src='/cases-solved.png' /> CASES SOLVED</label>
           <label className='label-case mt-3 ms-3' onClick={() => (setDisplay("submitCase"))}><img width={"45px"} src='/legal-document.png' />SUBMIT A CASE</label>
-          {/* <label className='label-case mt-3 ms-3' onClick={() => (setDisplay("contactMe"))}><img width={"45px"} src='/contact-me.png' /> CONTACT ME</label> */}
         </div>
       </div>
 
@@ -256,7 +330,7 @@ export const Profile = () => {
             <div>
               <div style={{ height: "485px", width: "500px", margin: "60px 0px 0px 300px" }} className='d-flex flex-column border rounded'>
                 <div style={{ height: "22px", width: "24px" }} className='rounded-circle border ms-auto me-4 mt-4'></div>
-                <input className='mt-auto' type="text" onKeyDown={handleKeyDown} style={{ width: "500px" }} />
+                <input className='mt-auto' type="text"  style={{ width: "500px" }} />
               </div>
             </div>}
     </div>

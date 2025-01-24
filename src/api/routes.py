@@ -185,6 +185,7 @@ def get_incoming_cases():
     identity = get_jwt_identity()
     lawyer = Lawyers.query.filter_by(email=identity).first()
     incoming_cases = [case.serialize() for case in lawyer.cases if case.status == "INCOMING"]
+    print(incoming_cases)
     incoming_cases.reverse()
     return incoming_cases
 
