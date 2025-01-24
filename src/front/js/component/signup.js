@@ -127,18 +127,21 @@ export const LawyerFields = ({ userData, handleChange }) => {
         <option value="Elder">Elder Law</option>
       </select>
 
-      {/* <label className="form-label" htmlFor="barNumber">Bar ID Number</label>
+      <label className="form-label mt-2" htmlFor="bar_number">Bar ID Number</label>
       <input
-        id="barNumber"
+        id="bar_number"
         className="form-control"
         type="text"
-        name="barNumber"
-        value={lawyerFields.barNumber}
+        name="bar_number"
+        value={userData.bar_number}
         onChange={handleChange}
         required
+        style={{width:"300px"}}
       />
 
-      <label className="form-label" htmlFor="lawFirm">Law Firm (if applicable)</label>
+      
+
+      {/* <label className="form-label" htmlFor="lawFirm">Law Firm (if applicable)</label>
       <input
         id="lawFirm"
         className="form-control"
