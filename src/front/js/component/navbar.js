@@ -1,5 +1,6 @@
 import React from "react";
 import { Link, useNavigate } from "react-router-dom";
+import logo from '../../img/Logo.png';
 
 export const Navbar = () => {
 	const navigate = useNavigate();
@@ -19,11 +20,13 @@ export const Navbar = () => {
 			aria-label="Main Navigation"
 		>
 			<div className="container d-flex justify-content-between align-items-center">
+				
 				<h1 className="h3 mb-0">
+					<img src={logo} alt="Logo" height={'50px'}/>
 					<Link
 						to="/"
 						className="text-decoration-none"
-						style={{ color: "#EBE9E1" }}
+						style={{ color: "#EBE9E1", paddingLeft: "10px" }}
 					>
 						Legal Sync
 					</Link>
