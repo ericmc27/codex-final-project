@@ -103,23 +103,26 @@ def store_picture():
 
     return jsonify({"photo": filename}), 200
 
-@app.route("/forgot-password")
+@app.route("/forgot-password", methods=['POST'])
 def forgot_password():
+    email = request.get_json()["email"]
     key = os.getenv("SENDGRID_API_KEY")
+
+    print(email)
     
-    # message = Mail(
-    # from_email='em2864@ecastillo.tech',
-    # to_emails='ecastillocalderon@mercy.edu',
-    # subject='Recovery password',
-    # html_content='<strong>Your recovery password is: 12345</strong>')
+    message = Mail(
+    from_email='em2864@ecastillo.tech', 
+    to_emails= email,
+    subject='Recovery password',
+    html_content='<strong>Your recovery password is: 12345</strong>')
  
-    # try:
-    #     sg = SendGridAPIClient(os.environ.get('SENDGRID_API_KEY'))
-    #     response = sg.send(message)
-    #     print(response.status_code)
-    # except Exception as e:
-    #     print("hello")
-    #     print(e)
+    try:
+        sg = SendGridAPIClient(os.environ.get('SENDGRID_API_KEY'))
+        response = sg.send(message)
+        print(response.status_code)
+    except Exception as e:
+        print("hello")
+        print(e)
     
     return jsonify(key)
 
