@@ -1,11 +1,11 @@
-import {Client} from "@twilio/conversations";
+import { Client } from "@twilio/conversations";
 
 
 // export let client = new Client(`${localStorage.getItem("CHAT")}`);
 // console.log(client)
 // const conversation = client.createConversation()
 
-import {socket} from ".."
+import { socket } from ".."
 
 const getState = ({ getStore, getActions, setStore }) => {
 	return {
@@ -131,16 +131,29 @@ const getState = ({ getStore, getActions, setStore }) => {
 
 					})
 			},
-			forgotPassword: ()=>{
-				// await fetch(`${process.env.BACKEND_URL}/forgot-password`)
+			forgotPassword: async (email) => {
+				const body = {
+					email,
+				}
+
+				await fetch(`${process.env.BACKEND_URL}/forgot-password`, 
+					{method: 'POST',
+					body: JSON.stringify(body),
+					headers: {
+						'Content-Type': 'application/json',
+					}})
+
+					return true
+				
+
 			},
-			submitCase: async(message, lawyer)=>{
+			submitCase: async (message, lawyer) => {
 				const body = {
 					...message,
 					lawyerId: lawyer.id
 				}
 
-				await fetch(`${process.env.BACKEND_URL}/api/submit-case`,{
+				await fetch(`${process.env.BACKEND_URL}/api/submit-case`, {
 					method: 'POST',
 					body: JSON.stringify(body),
 					headers: {
@@ -148,12 +161,12 @@ const getState = ({ getStore, getActions, setStore }) => {
 						'Authorization': `Bearer ${localStorage.getItem("JWT")}`
 					}
 				})
-				
-				socket.emit('lawyerDashboardUpdate', {type:'submitCase'})
+
+				socket.emit('lawyerDashboardUpdate', { type: 'submitCase' })
 
 			},
-			acceptCase: async(caseNumber, clientEmail)=>{
-				const body = {caseNumber}
+			acceptCase: async (caseNumber, clientEmail) => {
+				const body = { caseNumber }
 
 				await fetch(`${process.env.BACKEND_URL}/api/accept-case`, {
 					method: 'POST',
@@ -164,10 +177,10 @@ const getState = ({ getStore, getActions, setStore }) => {
 					}
 				})
 
-				socket.emit('lawyerDashboardUpdate', {type:'acceptCase', clientEmail})
+				socket.emit('lawyerDashboardUpdate', { type: 'acceptCase', clientEmail })
 			},
-			rejectCase: async(caseNumber, clientEmail)=>{
-				const body = {caseNumber, clientEmail}
+			rejectCase: async (caseNumber, clientEmail) => {
+				const body = { caseNumber, clientEmail }
 
 				await fetch(`${process.env.BACKEND_URL}/api/reject-case`,
 					{
@@ -181,24 +194,24 @@ const getState = ({ getStore, getActions, setStore }) => {
 					}
 				)
 
-				socket.emit('lawyerDashboardUpdate', {type:'rejectCase', clientEmail})
+				socket.emit('lawyerDashboardUpdate', { type: 'rejectCase', clientEmail })
 			},
-			getOpenCases: async ()=>{
-				const result = await fetch(`${process.env.BACKEND_URL}/api/accepted-cases`,{
+			getOpenCases: async () => {
+				const result = await fetch(`${process.env.BACKEND_URL}/api/accepted-cases`, {
 					headers: {
 						'Authorization': `Bearer ${localStorage.getItem("JWT")}`
 					}
 				}
-			)
-			const data = await result.json()
-			return data
+				)
+				const data = await result.json()
+				return data
 			},
-			getIncomingCases: async()=>{
-				const result = await fetch(`${process.env.BACKEND_URL}/api/incoming-cases`,{
-						headers: {
-							'Authorization': `Bearer ${localStorage.getItem("JWT")}`
-						}
+			getIncomingCases: async () => {
+				const result = await fetch(`${process.env.BACKEND_URL}/api/incoming-cases`, {
+					headers: {
+						'Authorization': `Bearer ${localStorage.getItem("JWT")}`
 					}
+				}
 				)
 				const data = await result.json()
 				return data
@@ -216,11 +229,11 @@ const getState = ({ getStore, getActions, setStore }) => {
 						'Authorization': `Bearer ${token}`
 					}
 				})
-				.then(async response=>{
-					const data = await response.json()
-					localStorage.setItem("Profile Picture", data.photo)
-					socket.emit("lawyerUpdate")
-				})
+					.then(async response => {
+						const data = await response.json()
+						localStorage.setItem("Profile Picture", data.photo)
+						socket.emit("lawyerUpdate")
+					})
 
 			},
 			displayLawyers: async (lawyerType) => {
@@ -235,13 +248,12 @@ const getState = ({ getStore, getActions, setStore }) => {
 				const result = await fetch(`${process.env.BACKEND_URL}/api/display`, options)
 				const data = await result.json()
 				localStorage.setItem("lawyers", JSON.stringify(data))
-				console.log("llegue aquii")
 			},
-			closedCases: async(lawyerId)=>{
+			closedCases: async (lawyerId) => {
 				let photo = localStorage.getItem('lawyers')
-				photo = JSON.parse(photo).find(obj=>obj.id===parseInt(lawyerId))?.photo
-				const body = {photo: photo ? photo : getActions().getProfilePicture()}
-				
+				photo = JSON.parse(photo).find(obj => obj.id === parseInt(lawyerId))?.photo
+				const body = { photo: photo ? photo : getActions().getProfilePicture() }
+
 				const response = await fetch(`${process.env.BACKEND_URL}/api/closed-cases`,
 					{
 						method: 'POST',
@@ -256,7 +268,7 @@ const getState = ({ getStore, getActions, setStore }) => {
 				const data = await response.json()
 				return data
 			},
-			getProfilePicture: ()=>{
+			getProfilePicture: () => {
 				return localStorage.getItem("Profile Picture")
 			},
 			clientCases: async () => {

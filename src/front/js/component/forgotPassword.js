@@ -1,10 +1,16 @@
 import React from "react";
+import { useContext } from "react";
+import { Context } from "../store/appContext";
 
 export const ForgotPasswordModal = ({ isOpen, onClose }) => {
-    const handleSubmit = (e) => {
+    const {actions} = useContext(Context)
+
+    const handleSubmit = async(e) => {
         e.preventDefault();
         const email = e.target.email.value;
-        console.log("Password reset email sent to:", email);
+        await actions.forgotPassword(email)
+        alert("email already sent")
+
 
         // Sendgrip here  
 
