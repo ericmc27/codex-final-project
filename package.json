@@ -74,6 +74,7 @@
 	},
 	"dependencies": {
 		"@sendgrid/mail": "^8.1.4",
+		"@tanstack/react-query": "^5.64.2",
 		"@twilio/conversations": "^2.6.0",
 		"assert": "^2.1.0",
 		"browserify-fs": "^1.0.0",
