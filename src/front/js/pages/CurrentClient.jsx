@@ -23,7 +23,8 @@ export const CurrentClient = () => {
           throw new Error(`Error: ${response.status} - ${response.statusText}`);
         }
 
-        const data = await response.json();
+        const data = await response.json()
+        console.log(data.cases)
         setClientCases(data.cases)
     }
 
@@ -70,7 +71,7 @@ export const CurrentClient = () => {
         <div className="container-fluid d-flex justify-content-between">
           <div className="d-flex flex-column align-items-center" style={{marginStart: "-450px"}}>
             <h3 className="mt-3">My Open Cases</h3>
-            <div className="openCases d-flex flex-column rounded" width={"150px"} height={"250px"} style={{ margin: "25px 0px 50px 0px", border: "1px solid black", backgroundColor: "whitesmoke" }}>
+            {clientCases.length !== 0 && <div className="openCases d-flex flex-column rounded" width={"150px"} height={"250px"} style={{ margin: "25px 0px 50px 0px", border: "1px solid black", backgroundColor: "whitesmoke" }}>
               <div style={{padding:"25px"}} className="d-flex flex-column gap-4">
                 {clientCases
                   .map((c) => (
@@ -84,7 +85,7 @@ export const CurrentClient = () => {
                     </div>
                   ))}
               </div>
-            </div>
+            </div>}
             </div>
                   {
                     messenger &&
