@@ -3,6 +3,9 @@ import { Link, useNavigate } from "react-router-dom";
 import logo from '../../img/Logo.png';
 
 export const Navbar = () => {
+	const notDisplay = ['/', '/login']
+
+	const currentPage = window.location.pathname
 	const navigate = useNavigate();
 
 	const handleLogout = () => {
@@ -31,13 +34,17 @@ export const Navbar = () => {
 						Legal Sync
 					</Link>
 				</h1>
-				<button
+				{
+					!notDisplay.includes(currentPage) &&
+					<button
 					onClick={handleLogout}
 					className="btn btn-outline-light"
 					style={{ color: "#EBE9E1" }}
 				>
 					Logout
 				</button>
+				}
+				
 			</div>
 		</nav>
 	);

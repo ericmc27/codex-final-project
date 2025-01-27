@@ -34,7 +34,7 @@ export const CurrentClient = () => {
       console.log(lawyerMessage)
       const messagesDiv = document.getElementById('messages')
       const messageDiv = document.createElement('div')
-      messageDiv.style.cssText = 'background-color: #e8e7df; height: auto; width: 100px; margin-top: 13px'
+      messageDiv.style.cssText = 'background-color: #7ae1fa; height: auto; width: fit-content; padding: 10px; margin-top: 13px; margin-left: auto; margin-right: 10px'
       messageDiv.className = 'border rounded'
       messageDiv.innerText = lawyerMessage
       messagesDiv.append(messageDiv)
@@ -56,7 +56,7 @@ export const CurrentClient = () => {
      socket.emit("messageToLawyer", lawyerEmail, messengerText)
      const messagesDiv = document.getElementById('messages')
      const messageDiv = document.createElement('div')
-     messageDiv.style.cssText = 'background-color: #e8e7df; height: auto; width: 100px; margin-top: 13px'
+     messageDiv.style.cssText = 'background-color: lightgreen; height: auto; width:fit-content; padding: 10px; margin-top: 13px; margin-left: 13px'
      messageDiv.className = 'border rounded'
      messageDiv.innerText = messengerText
      messagesDiv.append(messageDiv)

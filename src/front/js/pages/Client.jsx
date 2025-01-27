@@ -53,12 +53,12 @@ const Client = () => {
       <h4 style={{margin:"25px 0px 50px 0px"}}>{areaOfNeed} Lawyers</h4>
       <div className="d-flex flex-column gap-4">
         {
-          lawyerList?.map((lawyer, index) => {
+          lawyerList?.map((lawyer, index) => { 
             return (
               <>
                 <div key={index} style={{ width: "600px", height: "250px" }} className="border border-dark d-flex rounded">
                   <img className="rounded" width={"240px"} height={"250px"} src={`${process.env.BACKEND_URL}/assets/${lawyer.photo}`} />
-                  <h3 className="m-auto">{lawyer.name}</h3>
+                  <h3 className="m-auto">{name}</h3>
                   <button className="btn btn-dark" onClick={() => (navigate(`/profile?id=${lawyer.id}`, { state: { id: lawyer.id, name: lawyer.name, photo: lawyer.photo} }))}>SEE MY PROFILE</button>
                 </div>
               </>
@@ -68,7 +68,7 @@ const Client = () => {
       </div>
 
 
-      <label style={{ top: "110px", left: "84%", right: "5%" }} className="position-absolute"><big>Lawyer Specialties:</big> <small>(Click below to select a different specialty)</small></label>
+      <label style={{ top: "150px", left: "84%", right: "5%" }} className="position-absolute"><big>Lawyer Specialties:</big></label>
       <ul style={{ top: "190px", left: "82%", width: "250px", height: "500px", overflowY: "auto", maxHeight: "500px", border: "1px solid #3E362E" }} className="rounded list-unstyled position-absolute">
         {
           lawyersType.map((lawyer, index) => {

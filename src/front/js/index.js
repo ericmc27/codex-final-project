@@ -11,7 +11,7 @@ import "../styles/index.css";
 import Layout from "./layout";
 import {io} from "socket.io-client"
 
-export const socket = io("wss://turbo-space-robot-x5947g9vrv7vfpgvr-5000.app.github.dev")
+export const socket = io("wss://scaling-space-orbit-697pp5w6jv7h4xj7-5000.app.github.dev/")
 
 socket.on('connect', ()=>{
     socket.emit('addUser', localStorage.getItem("JWT"))
