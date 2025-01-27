@@ -102,7 +102,7 @@ def login():
             claims = {"id":user_exists.id, "role":user_type}
             token = create_access_token(identity=user_exists.email, additional_claims=claims)
             refresh_token = create_refresh_token(identity=user_exists.email)
-            json_data = jsonify({"token":token,  "refresh_token":refresh_token, "name":user_exists.name, "specialty":user_exists.specialty, "photo":user_exists.photo})
+            json_data = jsonify({"token":token,  "refresh_token":refresh_token, "name":user_exists.name, "specialty":user_exists.specialty, "photo":user_exists.photo, "id":user_exists.id})
 
 
     if not user_exists or not user_exists.check_password(password):
@@ -137,18 +137,6 @@ def get_client_cases():
 
     return jsonify({"logged_in_as": current_user_email, "cases": case_list}), 200
 
-
-
-# def generate_token_chat(email):
-#     account_sid = os.environ['TWILIO_ACCOUNT_SID']
-#     api_key = os.environ['TWILIO_API_KEY']
-#     api_secret = os.environ['TWILIO_API_KEY_SECRET']
-
-#     token_chat = AccessToken(account_sid, api_key, api_secret, identity=email)
-#     chat_grant = ChatGrant(service_sid="IS94e202b0d876453699a53eab5be3ccdf")
-#     token_chat.add_grant(chat_grant)
-
-#     return token_chat
 
 @api.route("/submit-case", methods=["POST"])
 @jwt_required()
@@ -207,8 +195,6 @@ def get_closed_cases():
     body = request.get_json()
     lawyer = Lawyers.query.filter_by(photo=body['photo']).first()
     closed_cases = [case.serialize() for case in lawyer.cases if case.status == "CLOSED"]
-    # cases = [{'title':case.title, 'body':case.body} for case in closed_cases]
-    # print(cases)
     return jsonify(closed_cases)
 
 @api.route("/verify", methods=["GET"])

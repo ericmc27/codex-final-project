@@ -121,6 +121,7 @@ const getState = ({ getStore, getActions, setStore }) => {
 								localStorage.setItem("Specialty", data.specialty)
 								localStorage.setItem("Profile Picture", data.photo)
 								localStorage.setItem("Name", data.name)
+								localStorage.setItem('id', data.id)
 								window.location.href = "/lawyer"
 							}
 						}

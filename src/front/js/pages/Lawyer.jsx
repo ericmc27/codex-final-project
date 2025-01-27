@@ -54,8 +54,6 @@ const Lawyer = () => {
 
   const handleClistListClick = (client)=>{
     setCurrentClient(client)
-    console.log(client)
-    console.log(clientsList)
     setShowMessage(prev=>!prev)
   }
 
@@ -65,14 +63,15 @@ const Lawyer = () => {
 
   const handleKeyDown = (e)=>{
     if(e.key==="Enter"){
-      console.log(lawyerMessage)
       socket.emit('messageToClient', currentClient, lawyerMessage)
+      const messageBox = document.getElementById('messageBox')
       const messagesDiv = document.getElementById('messageBox')
       const messageDiv = document.createElement('div')
-      messageDiv.style.cssText = 'background-color: #e8e7df; height: auto; width: 100px; margin-top: 13px'
+      messageDiv.style.cssText = 'background-color: lightgreen; height: auto; width:fit-content; padding: 10px; margin-top: 13px; margin-left: 13px'
       messageDiv.className = 'border rounded'
       messageDiv.innerText = lawyerMessage
       messagesDiv.append(messageDiv)
+      messageBox.scrollTop = messageBox.scrollHeight
       setLawyerMessage("")
     }
   }
@@ -111,7 +110,7 @@ const Lawyer = () => {
     socket.on('clientMessage', (message, client) => {
       const messageBox = document.getElementById('messageBox')
       const childDiv = document.createElement('div')
-      childDiv.style.cssText = 'background-color: #e8e7df; height: auto; width: 100px; margin-top: 13px'
+      childDiv.style.cssText = 'background-color: #7ae1fa; height: auto; width: fit-content; padding: 10px; margin-top: 13px; margin-left: auto; margin-right: 10px'
       childDiv.className = 'border rounded'
       childDiv.innerHTML = message
       setClientsList(prev=>({...prev, [client]:message}))
@@ -210,9 +209,9 @@ const Lawyer = () => {
                     {
                       showMessage &&
                       <>
-                          <div id='messageBox' style={{height:"347px", width:"680px", maxHeight:"310px", overflowY:"auto", marginTop:"20px", marginLeft:"15px"}} className='d-flex flex-column border'>
-                            <div style={{backgroundColor: '#e8e7df', height: 'auto', width: '100px', marginTop: '13px'}}>{clientsList[currentClient]}</div>
-                            <input onChange={handleMessage} onKeyDown={handleKeyDown} value={lawyerMessage} style={{height:"40px", width:"683px", left:"500px", top:"625px"}}  className='rounded position-absolute' type='text'/>
+                          <div id='messageBox' style={{height:"350px", width:"680px",  overflowY:"auto", marginTop:"20px", marginLeft:"15px"}} className='d-flex flex-column border'>
+                            <div style={{backgroundColor: '#7ae1fa', height: 'auto', width: 'fit-content', padding: '10px', marginTop: '13px', marginLeft: 'auto', marginRight: '10px', borderRadius: '0.25rem'}}>{clientsList[currentClient]}</div>
+                            <input onChange={handleMessage} onKeyDown={handleKeyDown} value={lawyerMessage} style={{height:"40px", width:"683px", left:"500px", top:"695px"}}  className='rounded position-absolute' type='text'/>
                           </div>
                       </>
                     }
@@ -273,7 +272,11 @@ export const Profile = () => {
 
   React.useEffect(() => {
     const casesSolved = async () => {
-      const data = await actions.closedCases(lawyerId)
+      if( lawyerId !== null ){
+        var data = await actions.closedCases(lawyerId)
+      }else{
+        var data = await actions.closedCases(localStorage.getItem('id'))
+      }
       setCasesSolved(data)
     }
 
