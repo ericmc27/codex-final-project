@@ -36,7 +36,7 @@ const Lawyer = () => {
   const [openCases, setOpenCases] = useState([])
   const [incomingCases, setIncomingCases] = useState([])
   const { actions } = useContext(Context)
-  const [stats, setStats] = useState({ openCases: 0, incomingCases: 0});
+  const [stats, setStats] = useState({ openCases: 0, incomingCases: 0 });
   const [currentCase, setCurrentCase] = useState("openCases")
   const [clientsList, setClientsList] = useState({})
   const [currentClient, setCurrentClient] = useState("")
@@ -52,17 +52,17 @@ const Lawyer = () => {
     await actions.rejectCase(caseNumber, clientEmail)
   }
 
-  const handleClistListClick = (client)=>{
+  const handleClistListClick = (client) => {
     setCurrentClient(client)
-    setShowMessage(prev=>!prev)
+    setShowMessage(prev => !prev)
   }
 
-  const handleMessage = (e)=>{
+  const handleMessage = (e) => {
     setLawyerMessage(e.target.value)
   }
 
-  const handleKeyDown = (e)=>{
-    if(e.key==="Enter"){
+  const handleKeyDown = (e) => {
+    if (e.key === "Enter") {
       socket.emit('messageToClient', currentClient, lawyerMessage)
       const messageBox = document.getElementById('messageBox')
       const messagesDiv = document.getElementById('messageBox')
@@ -113,7 +113,7 @@ const Lawyer = () => {
       childDiv.style.cssText = 'background-color: #7ae1fa; height: auto; width: fit-content; padding: 10px; margin-top: 13px; margin-left: auto; margin-right: 10px'
       childDiv.className = 'border rounded'
       childDiv.innerHTML = message
-      setClientsList(prev=>({...prev, [client]:message}))
+      setClientsList(prev => ({ ...prev, [client]: message }))
       messageBox.appendChild(childDiv)
       messageBox.scrollTop = messageBox.scrollHeight
     })
@@ -196,37 +196,32 @@ const Lawyer = () => {
                     )
                   })
                   :
-                  <div className='d-flex' style={{height: "400px", width: "915px", backgroundColor:'white', margin: "20px 50px 0px 0px"}}>
-                    <div className='border d-flex justify-content-center' style={{height:"350px", width:"160px", marginTop:"20px", marginLeft:"25px", backgroundColor:"whitesmoke"}}>
+                  <div className='d-flex' style={{ height: "400px", width: "915px", backgroundColor: 'white', margin: "20px 50px 0px 0px" }}>
+                    <div className='border d-flex justify-content-center' style={{ height: "350px", width: "160px", marginTop: "20px", marginLeft: "25px", backgroundColor: "whitesmoke" }}>
                       {
-                        Object.keys(clientsList).map(client=>{
-                          return <div onClick={()=>(handleClistListClick(client))}>{client}</div>
+                        Object.keys(clientsList).map(client => {
+                          return <div onClick={() => (handleClistListClick(client))}>{client}</div>
                         }
-                      )}
+                        )}
                     </div>
 
 
                     {
                       showMessage &&
                       <>
-                          <div id='messageBox' style={{height:"350px", width:"680px",  overflowY:"auto", marginTop:"20px", marginLeft:"15px"}} className='d-flex flex-column border'>
-                            <div style={{backgroundColor: '#7ae1fa', height: 'auto', width: 'fit-content', padding: '10px', marginTop: '13px', marginLeft: 'auto', marginRight: '10px', borderRadius: '0.25rem'}}>{clientsList[currentClient]}</div>
-                            <input onChange={handleMessage} onKeyDown={handleKeyDown} value={lawyerMessage} style={{height:"40px", width:"683px", left:"500px", top:"695px"}}  className='rounded position-absolute' type='text'/>
-                          </div>
+                        <div id='messageBox' style={{ height: "350px", width: "680px", overflowY: "auto", marginTop: "20px", marginLeft: "15px" }} className='d-flex flex-column border'>
+                          <div style={{ backgroundColor: '#7ae1fa', height: 'auto', width: 'fit-content', padding: '10px', marginTop: '13px', marginLeft: 'auto', marginRight: '10px', borderRadius: '0.25rem' }}>{clientsList[currentClient]}</div>
+                          <input onChange={handleMessage} onKeyDown={handleKeyDown} value={lawyerMessage} style={{ height: "40px", width: "683px", left: "500px", top: "695px" }} className='rounded position-absolute' type='text' />
+                        </div>
                       </>
                     }
-                 
+
                   </div>
             }
           </ul>
         </section>
 
-        <section id="calendar">
-          <h2>Calendar</h2>
-          <div className="calendar-widget">
-            <p>Calendar functionality coming soon!</p>
-          </div>
-        </section>
+
       </main>
     </div>
   );
@@ -272,9 +267,9 @@ export const Profile = () => {
 
   React.useEffect(() => {
     const casesSolved = async () => {
-      if( lawyerId !== null ){
+      if (lawyerId !== null) {
         var data = await actions.closedCases(lawyerId)
-      }else{
+      } else {
         var data = await actions.closedCases(localStorage.getItem('id'))
       }
       setCasesSolved(data)
@@ -294,19 +289,21 @@ export const Profile = () => {
 
   return (
     <div className='d-flex'>
-      <div style={{ border: "1px solid #3E362E", height: "600px", width: "300px" }} className='d-flex flex-column align-items-center ms-5 mt-3 rounded'>
+      <div style={{ border: "2px solid #3E362E", height: "600px", width: "300px", backgroundColor: "#3E362E" }} className='d-flex flex-column align-items-center ms-5 mt-3 rounded'>
         <input onChange={handlePhotoChange} type='file' name='file' accept='image/*' className='d-none' id='profile-picture' />
         <label className='mt-4' style={{ cursor: "pointer" }} htmlFor='profile-picture'>
           <img className='border rounded-circle' style={{ height: "200px", width: "200px" }} src={state?.photo || lawyer?.photo || photo ? `${process.env.BACKEND_URL}/assets/${state?.photo || lawyer?.photo || photo}` : `/profile-picture-placeholder.jpg`}></img>
         </label>
 
         <h2 className='text-capitalize'>{name}</h2>
-        <h4>{specialty} Lawyer</h4>
+        <h4 style={{ color: "#FAFBFC" }} >{specialty} Lawyer</h4>
 
-        <div style={{ height: "130px", width: "200px", backgroundColor: "#FF8C00", color: "#3E362E" }} className='fw-bold mt-5 rounded'>
+        <div style={{ height: "130px", width: "200px", backgroundColor: "#EBE9E1", color: "#3E362E" }} className='fw-bold mt-5 rounded'>
           <label className='label-case mt-2 ms-3' onClick={() => (setDisplay("casesSolved"))}><img width={"40px"} src='/cases-solved.png' /> CASES SOLVED</label>
           <label className='label-case mt-3 ms-3' onClick={() => (setDisplay("submitCase"))}><img width={"45px"} src='/legal-document.png' />SUBMIT A CASE</label>
         </div>
+        <div style={{ height: "10px", width: "200px", backgroundColor: "#EBE9E1", color: "#3E362E" }} className='fw-bold mt-5 rounded'></div>
+        <div style={{ height: "10px", width: "100px", backgroundColor: "#EBE9E1", color: "#3E362E" }} className='fw-bold mt-4 rounded'></div>
       </div>
 
       {
@@ -315,7 +312,7 @@ export const Profile = () => {
             {
               casesSolved.map((cases, index) => {
                 return (
-                  <div key={index} style={{ height: "500px", width: "500px" }} className='bg-warning rounded'>{cases.title}</div>
+                  <div key={index} style={{ height: "80px", width: "400px", backgroundColor: "#3E362E" }} className='rounded text-white text-center pt-4'><b>{cases.title}</b></div>
                 )
               })
             }
@@ -333,7 +330,7 @@ export const Profile = () => {
             <div>
               <div style={{ height: "485px", width: "500px", margin: "60px 0px 0px 300px" }} className='d-flex flex-column border rounded'>
                 <div style={{ height: "22px", width: "24px" }} className='rounded-circle border ms-auto me-4 mt-4'></div>
-                <input className='mt-auto' type="text"  style={{ width: "500px" }} />
+                <input className='mt-auto' type="text" style={{ width: "500px" }} />
               </div>
             </div>}
     </div>
