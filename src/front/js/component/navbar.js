@@ -3,7 +3,7 @@ import { Link, useNavigate } from "react-router-dom";
 import logo from '../../img/Logo.png';
 
 export const Navbar = () => {
-	const notDisplay = ['/', '/login']
+	const notDisplay = ['/', '/login', '/signup']
 
 	const currentPage = window.location.pathname
 	const navigate = useNavigate();

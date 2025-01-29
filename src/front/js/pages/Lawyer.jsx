@@ -9,6 +9,7 @@ import { socket } from '..'
 
 
 
+
 export const ProtectedLawyer = ({ children }) => {
   const { actions } = React.useContext(Context)
   const [token, setToken] = React.useState(undefined)
@@ -50,6 +51,10 @@ const Lawyer = () => {
 
   const rejectCase = async (caseNumber, clientEmail) => {
     await actions.rejectCase(caseNumber, clientEmail)
+  }
+
+  const closeCase = async (caseNumber, clientEmail) => {
+    await actions.closeCase(caseNumber, clientEmail)
   }
 
   const handleClistListClick = (client) => {
@@ -107,6 +112,11 @@ const Lawyer = () => {
       fetchIncomingCases()
     })
 
+
+    socket.on('newClosedCase', async ()=>{
+        await fetchOpenCases()
+    })
+
     socket.on('clientMessage', (message, client) => {
       const messageBox = document.getElementById('messageBox')
       const childDiv = document.createElement('div')
@@ -122,14 +132,12 @@ const Lawyer = () => {
 
 
   return (
-    <div style={{ width: "950px" }} className="dashboard m-auto">
-      <header className="dashboard-header bg-dark">
+    <div style={{ width: "950px"}} className="dashboard m-auto">
+      <header style={{backgroundColor:"#3E362E"}} className="dashboard-header">
         <h1>Lawyer Dashboard</h1>
         <nav>
           <ul>
-            <li><a href="#">Home</a></li>
             <li><a href='/profile'>Profile</a></li>
-            <li><a href="#logout">Logout</a></li>
           </ul>
         </nav>
       </header>
@@ -147,6 +155,7 @@ const Lawyer = () => {
             </div>
             <div onClick={() => (setCurrentCase("messages"))} role='button' className="stat-card" style={{ backgroundColor: `${currentCase === "messages" ? "darkorange" : ""}` }}>
               <h3>MESSAGES</h3>
+              {/* <img height={"45px"} src="/notification.png"/> */}
               <p>{stats.messages}</p>
             </div>
           </div>
@@ -162,12 +171,14 @@ const Lawyer = () => {
                       <h2>Cases</h2>
                       <li className='case-item'>
                         <div className='d-flex justify-content-between'>
-                          <div><span className='fw-bold'>Title: </span>{caseObj.title}</div>
+                          <div className='text-capitalize'><span className='fw-bold '>Title: </span>{caseObj.title}</div>
                           <div><span className='fw-bold'>Case Number: </span>{caseObj.case_number}</div>
                         </div>
-                        <div><span className='fw-bold'>Client Name: </span>{caseObj.client.name}</div>
+                        <div className='text-capitalize'><span className='fw-bold'>Client Name: </span>{caseObj.client.name}</div>
                         <div style={{ height: "150px", backgroundColor: "whitesmoke" }} className='border border-1'>{caseObj.body}</div>
-                        <button onClick={() => (rejectCase(caseObj.case_number, caseObj.client.email))} className='btn btn-danger'>Decline</button>
+                        <div className='d-flex justify-content-end mt-3 gap-3'>
+                          <button onClick={()=>(closeCase(caseObj.case_number, caseObj.client.email))} className='btn btn-success'>DONE</button>
+                        </div>
                       </li>
                     </>
 
@@ -181,14 +192,14 @@ const Lawyer = () => {
                         <h2>Cases</h2>
                         <li className='case-item'>
                           <div className='d-flex justify-content-between'>
-                            <div><span className='fw-bold'>Title: </span>{caseObj.title}</div>
+                            <div className='text-capitalize'><span className='fw-bold'>Title: </span>{caseObj.title}</div>
                             <div><span className='fw-bold'>Case Number: </span>{caseObj.case_number}</div>
                           </div>
-                          <div><span className='fw-bold'>Client Name: </span>{caseObj.client.name}</div>
+                          <div className='text-capitalize'><span className='fw-bold'>Client Name: </span>{caseObj.client.name}</div>
                           <div style={{ height: "150px", backgroundColor: "whitesmoke" }} className='border border-1'>{caseObj.body}</div>
                           <div className='d-flex justify-content-end mt-3 gap-3'>
                             <button onClick={() => (acceptCase(caseObj.case_number, caseObj.client.email))} className='btn btn-success'>Accept</button>
-                            <button onClick={() => (rejectCase(caseObj.case_number, caseObj.client.email))} className='btn btn-danger'>Decline</button>
+                            <button onClick={() => (rejectCase(caseObj.case_number, caseObj.client.email))} className='btn btn-danger'>Reject</button>
                           </div>
                         </li>
                       </>
@@ -200,7 +211,7 @@ const Lawyer = () => {
                     <div className='border d-flex justify-content-center' style={{ height: "350px", width: "160px", marginTop: "20px", marginLeft: "25px", backgroundColor: "whitesmoke" }}>
                       {
                         Object.keys(clientsList).map(client => {
-                          return <div onClick={() => (handleClistListClick(client))}>{client}</div>
+                          return <div style={{cursor:"pointer"}} onClick={() => (handleClistListClick(client))}>{client}</div>
                         }
                         )}
                     </div>
@@ -245,6 +256,7 @@ export const Profile = () => {
   const [display, setDisplay] = React.useState("casesSolved")
 
 
+
   const handlePhotoChange = async (e) => {
     const formData = new FormData()
     formData.append('file', e.target.files[0])
@@ -257,12 +269,8 @@ export const Profile = () => {
   }
 
   const caseSubmitted = async () => {
-    const title = document.getElementById("title")
-    const body = document.getElementById("body")
-
     await actions.submitCase(message, lawyer)
-    title.value = ""
-    body.value = ""
+    setMessage(prev=>({...prev, title:"", body:""}))
   }
 
   React.useEffect(() => {
@@ -285,6 +293,11 @@ export const Profile = () => {
         setPhoto(storedPhoto)
       }
     })
+
+    socket.on('newClosedCase', async ()=>{
+      await casesSolved()
+    })
+
   }, [])
 
   return (
@@ -295,7 +308,7 @@ export const Profile = () => {
           <img className='border rounded-circle' style={{ height: "200px", width: "200px" }} src={state?.photo || lawyer?.photo || photo ? `${process.env.BACKEND_URL}/assets/${state?.photo || lawyer?.photo || photo}` : `/profile-picture-placeholder.jpg`}></img>
         </label>
 
-        <h2 className='text-capitalize'>{name}</h2>
+        <h2 className='text-capitalize text-white'>{name}</h2>
         <h4 style={{ color: "#FAFBFC" }} >{specialty} Lawyer</h4>
 
         <div style={{ height: "130px", width: "200px", backgroundColor: "#EBE9E1", color: "#3E362E" }} className='fw-bold mt-5 rounded'>

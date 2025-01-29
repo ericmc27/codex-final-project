@@ -81,6 +81,12 @@ io.on('connection', (socket)=>{
             io.emit("newRejectedCase")
             io.to(socketId).emit("lawyerRejectedYourCase")
         }
+        else if (type === "doneCase"){
+            console.log("case is completed")
+            const socketId = users[clientEmail]
+            io.emit("newClosedCase")
+            io.to(socketId).emit("lawyerCompletedYourCase")
+        }
 
    })
 
