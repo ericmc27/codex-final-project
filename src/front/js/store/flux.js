@@ -197,6 +197,21 @@ const getState = ({ getStore, getActions, setStore }) => {
 
 				socket.emit('lawyerDashboardUpdate', { type: 'rejectCase', clientEmail })
 			},
+			closeCase: async (caseNumber, clientEmail) => {
+				const body = { caseNumber }
+
+				await fetch(`${process.env.BACKEND_URL}/api/close-case`, {
+					method: 'POST',
+					body: JSON.stringify(body),
+					headers: {
+						'Content-Type': 'application/json',
+						'Authorization': `Bearer ${localStorage.getItem("JWT")}`
+					}
+				})
+
+				socket.emit('lawyerDashboardUpdate', { type: 'doneCase', clientEmail })
+
+			},
 			getOpenCases: async () => {
 				const result = await fetch(`${process.env.BACKEND_URL}/api/accepted-cases`, {
 					headers: {

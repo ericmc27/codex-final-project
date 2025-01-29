@@ -2,6 +2,7 @@ import React, { useEffect } from "react"
 import { BounceLoader } from "react-spinners"
 import { Context } from "../store/appContext"
 import { useNavigate, Link } from "react-router-dom"
+import "../../styles/client.css"
 
 import { socket } from ".."
 
@@ -49,7 +50,11 @@ const Client = () => {
 
   return (
     <div className="container d-flex flex-column align-items-center">
-      <Link to="../current_client">My case(s)</Link>
+      <button style={{backgroundColor:"#3E362E", padding:"10px"}} className="btn mt-3 text-white">
+      <Link className="text-white text-decoration-none" to="../current_client">
+        My case(s)
+      </Link>
+      </button>
       <h4 style={{margin:"25px 0px 50px 0px"}}>{areaOfNeed} Lawyers</h4>
       <div className="d-flex flex-column gap-4">
         {
@@ -58,8 +63,11 @@ const Client = () => {
               <>
                 <div key={index} style={{ width: "600px", height: "250px" }} className="border border-dark d-flex rounded">
                   <img className="rounded" width={"240px"} height={"250px"} src={`${process.env.BACKEND_URL}/assets/${lawyer.photo}`} />
-                  <h3 className="m-auto">{name}</h3>
-                  <button className="btn btn-dark" onClick={() => (navigate(`/profile?id=${lawyer.id}`, { state: { id: lawyer.id, name: lawyer.name, photo: lawyer.photo} }))}>SEE MY PROFILE</button>
+                  <div style={{width:"250px"}} className="d-flex flex-column align-items-center">
+                    <h3 className="mt-4 text-capitalize">{lawyer.name}</h3>
+                    <h5 className="text-capitalize">{lawyer.specialty}</h5>
+                  </div>
+                  <button style={{backgroundColor:"#3E362E", color:"white"}} className="btn ms-auto" onClick={() => (navigate(`/profile?id=${lawyer.id}`, { state: { id: lawyer.id, name: lawyer.name, photo: lawyer.photo} }))}>SEE MY PROFILE</button>
                 </div>
               </>
             )
@@ -68,8 +76,8 @@ const Client = () => {
       </div>
 
 
-      <label style={{ top: "150px", left: "84%", right: "5%" }} className="position-absolute"><big>Lawyer Specialties:</big></label>
-      <ul style={{ top: "190px", left: "82%", width: "250px", height: "500px", overflowY: "auto", maxHeight: "500px", border: "1px solid #3E362E" }} className="rounded list-unstyled position-absolute">
+      <label style={{ top: "140px", left: "84%", right: "5%" }} className="position-absolute"><big>Lawyer Specialties</big></label>
+      <ul style={{ top: "175px", left: "82%", width: "250px", height: "500px", overflowY: "auto", maxHeight: "500px", border: "1px solid #3E362E" }} className="rounded list-unstyled position-absolute">
         {
           lawyersType.map((lawyer, index) => {
             return (

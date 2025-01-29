@@ -72,7 +72,7 @@ def display_lawyers():
     data = request.get_json()
     lawyer_type = data.get("lawyerType")
     lawyers = Lawyers.query.filter_by(specialty=lawyer_type).filter(Lawyers.photo.isnot(None))
-    lawyers_data = [{"id":lawyer.id, "name":lawyer.name, "photo":lawyer.photo} for lawyer in lawyers]
+    lawyers_data = [{"id":lawyer.id, "name":lawyer.name, "photo":lawyer.photo, "specialty":lawyer.specialty} for lawyer in lawyers]
     return jsonify(lawyers_data)
 
 
@@ -174,7 +174,6 @@ def get_incoming_cases():
     identity = get_jwt_identity()
     lawyer = Lawyers.query.filter_by(email=identity).first()
     incoming_cases = [case.serialize() for case in lawyer.cases if case.status == "INCOMING"]
-    print(incoming_cases)
     incoming_cases.reverse()
     return incoming_cases
 
@@ -186,6 +185,17 @@ def reject_case():
     case = Cases.query.filter_by(case_number=case_number).first()
     db.session.delete(case)
     db.session.commit()
+    return jsonify(case_number)
+
+
+@api.route("/close-case", methods=['POST'])
+@jwt_required()
+def close_case():
+    case_number = request.get_json()['caseNumber']
+    case = Cases.query.filter_by(case_number=case_number).first()
+    case.status = "CLOSED"
+    db.session.commit()
+
     return jsonify(case_number)
 
 
